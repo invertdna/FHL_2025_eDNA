@@ -1,0 +1,139 @@
+---
+title: "The Greatest eDNA Study Ever"
+author: "FHL 2025 eDNA Workshop"
+format: html
+editor: visual
+---
+
+```{r Preliminary}
+#| include: false
+#| echo: false
+
+#Set up here: load data and quality control
+library(tidyverse)
+library(here)
+library(vegan)
+library(readxl)
+library(microViz)
+library(lubridate)
+here::i_am("FHL_2025_eDNA-main.Rproj")
+# Set working directory
+setwd(here())
+
+###create functions
+#Function for calculating the eDNA Index from Kelly et al. 2019
+eDNA_index <- function(community_matrix){
+  #community matrix with samples in cols, species in rows
+  require(vegan)
+  
+  props <- decostand(community_matrix, method = "total", MARGIN = 2)
+  
+  idx <- decostand(props, method = "max", MARGIN = 1)
+  idx <- as.data.frame(idx)
+  colnames(idx) <- colnames(community_matrix)
+  row.names(idx) <- row.names(community_matrix)
+  
+  return(idx)
+}
+
+meta <- read.csv(here("data/Field_Data_Sheet_Digitized.csv")) #metadata
+
+
+###load data: COI
+COI_01 <- read.csv(here("data/FHL04_LoLe_taxon_table_wide.csv")) #raw data
+
+###load data: MV1
+MV1_01 <- read.csv(here("data/FHL02_MV1_taxon_table_wide.csv")) #raw data
+
+###load data: MFU
+MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
+
+```
+
+```{r QualityControl}
+
+##Quality Control
+#Pedro's change
+#First remove the samples that matched barcodes with previous run in the flowcell due to carryover
+carryover_samples <- c(
+  "FHL094","FHL071","FHL095","FHL078","FHL096",
+  "ENC4A","FHL097","ENC5B","FHL021","ENC6C",
+  "FHL036","FHL050","PCRNa","FHL064","PCRNb"
+)
+COI_02 <- COI_01 %>%
+  select(!matches(paste(corryover_samples, collapse = "|")))
+
+##here is an example
+
+#QC the raw data for min read depth
+COI_03 <- COI_02 %>% 
+  dplyr::select(-2) %>% 
+  drop_na() %>% 
+  pivot_longer(cols = -BestTaxon) %>% 
+  filter(value > 0) %>% 
+  group_by(BestTaxon) %>% 
+  add_tally() %>% 
+  filter(n > 5) %>% ##FILTER for min occurrences
+  dplyr::select(-n) %>% 
+  pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+  column_to_rownames("BestTaxon") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  mutate(tot = rowSums(.)) %>% 
+  filter(tot > 10000) %>% ##FILTER for total read-depth in sample
+  dplyr::select(-tot) %>% 
+  dplyr::select(which(colSums(.) > 0))
+
+#get relevant metadata  
+COI_m <- meta %>% 
+  dplyr::select(Tube.Number, Date, Time.Finish, Day.Night, Treatment..Light..NoLight..FieldNegative., Temperature, Salinity) %>% 
+  rename(Treatment = Treatment..Light..NoLight..FieldNegative.,
+         Tube = Tube.Number,
+         Time = Time.Finish) %>% 
+  mutate(Date = mdy(Date),
+         Time = hm(Time)) %>% 
+  mutate(datetime = ymd_hms(paste(Date, Time)))
+  
+#make rownames consistent across data and metadata, etc
+COI_04 <- COI_03 %>% 
+  rownames_to_column("Tube") %>% 
+  mutate(Tube = str_replace_all(Tube, pattern = "LoLe\\.FHL", replacement = ""),
+         Tube = str_replace_all(Tube, pattern = "\\.COI.+", replacement = "")) %>% 
+  mutate(Tube = as.numeric(Tube)) %>% 
+  column_to_rownames("Tube")
+
+#filter metadata to just samples we kept after QC
+COI_p <- COI_m %>% 
+  filter(Tube %in% rownames(COI_04))
+  COI_p <- COI_p[order(COI_p$Tube),]
+  COI_p <- COI_p %>% 
+    unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
+    mutate(time_idx = match(tmp, unique(tmp)))
+#reorder to mirror metadata
+  COI_04 <- COI_04[order(as.numeric(rownames(COI_03))),]  
+  
+#check ordering
+rownames(COI_04) == COI_p$Tube
+
+
+###then do the same for the other two datasets
+```
+
+```{r Transformations}
+
+##COI
+    #make pres/absence dataset
+    COI_bin = COI_03
+      COI_bin[COI_bin>0]<-1  
+    
+    #make eDNA index dataset
+    COI_idx = COI_03 %>% 
+       eDNA_index()
+    
+    #make proportion dataset  
+  
+```
+
+## Abstract
+
+## Introduction

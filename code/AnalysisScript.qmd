@@ -53,7 +53,7 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 ```{r QualityControl}
 
 ##Quality Control
-
+#Pedro's change
 #First remove the samples that matched barcodes with previous run in the flowcell due to carryover
 carryover_samples <- c(
   "FHL094","FHL071","FHL095","FHL078","FHL096",
