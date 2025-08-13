@@ -63,6 +63,8 @@ carryover_samples <- c(
 COI_02 <- COI_01 %>%
   select(!matches(paste(corryover_samples, collapse = "|")))
 
+##here is an example
+
 #QC the raw data for min read depth
 COI_03 <- COI_02 %>% 
   dplyr::select(-2) %>% 
