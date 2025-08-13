@@ -54,6 +54,7 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 
 ##Quality Control
 #Pedro's change
+
 #First remove the samples that matched barcodes with previous run in the flowcell due to carryover
 carryover_samples <- c(
   "FHL094","FHL071","FHL095","FHL078","FHL096",
@@ -84,6 +85,43 @@ COI_03 <- COI_02 %>%
   dplyr::select(-tot) %>% 
   dplyr::select(which(colSums(.) > 0))
 
+MV1_02 <- MV1_01 %>% 
+  dplyr::select(-2) %>% 
+  drop_na() %>% 
+  pivot_longer(cols = -BestTaxon) %>% 
+  filter(value > 0) %>% 
+  group_by(BestTaxon) %>% 
+  add_tally() %>% 
+  filter(n > 5) %>% ##FILTER for min occurrences
+  dplyr::select(-n) %>% 
+  pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+  column_to_rownames("BestTaxon") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  mutate(tot = rowSums(.)) %>% 
+  filter(tot > 10000) %>% ##FILTER for total read-depth in sample
+  dplyr::select(-tot) %>% 
+  dplyr::select(which(colSums(.) > 0))
+
+MFU_02 <- MFU_01 %>% 
+  dplyr::select(-2) %>% 
+  drop_na() %>% 
+  pivot_longer(cols = -BestTaxon) %>% 
+  filter(value > 0) %>% 
+  group_by(BestTaxon) %>% 
+  add_tally() %>% 
+  filter(n > 5) %>% ##FILTER for min occurrences
+  dplyr::select(-n) %>% 
+  pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+  column_to_rownames("BestTaxon") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  mutate(tot = rowSums(.)) %>% 
+  filter(tot > 10000) %>% ##FILTER for total read-depth in sample
+  dplyr::select(-tot) %>% 
+  dplyr::select(which(colSums(.) > 0))
+
+
 #get relevant metadata  
 COI_m <- meta %>% 
   dplyr::select(Tube.Number, Date, Time.Finish, Day.Night, Treatment..Light..NoLight..FieldNegative., Temperature, Salinity) %>% 
@@ -93,7 +131,26 @@ COI_m <- meta %>%
   mutate(Date = mdy(Date),
          Time = hm(Time)) %>% 
   mutate(datetime = ymd_hms(paste(Date, Time)))
+
+MV1_m <- meta %>% 
+  dplyr::select(Tube.Number, Date, Time.Finish, Day.Night, Treatment..Light..NoLight..FieldNegative., Temperature, Salinity) %>% 
+  rename(Treatment = Treatment..Light..NoLight..FieldNegative.,
+         Tube = Tube.Number,
+         Time = Time.Finish) %>% 
+  mutate(Date = mdy(Date),
+         Time = hm(Time)) %>% 
+  mutate(datetime = ymd_hms(paste(Date, Time)))
   
+MFU_m <- meta %>% 
+  dplyr::select(Tube.Number, Date, Time.Finish, Day.Night, Treatment..Light..NoLight..FieldNegative., Temperature, Salinity) %>% 
+  rename(Treatment = Treatment..Light..NoLight..FieldNegative.,
+         Tube = Tube.Number,
+         Time = Time.Finish) %>% 
+  mutate(Date = mdy(Date),
+         Time = hm(Time)) %>% 
+  mutate(datetime = ymd_hms(paste(Date, Time)))
+
+
 #make rownames consistent across data and metadata, etc
 COI_04 <- COI_03 %>% 
   rownames_to_column("Tube") %>% 
@@ -102,6 +159,21 @@ COI_04 <- COI_03 %>%
   mutate(Tube = as.numeric(Tube)) %>% 
   column_to_rownames("Tube")
 
+MV1_03 <- MV1_02 %>% 
+  rownames_to_column("Tube") %>% 
+  mutate(Tube = str_replace_all(Tube, pattern = "MV1\\.FHL", replacement = ""),
+         Tube = str_replace_all(Tube, pattern = "_MV1", replacement = "")) %>% 
+  mutate(Tube = as.numeric(Tube)) %>% 
+  column_to_rownames("Tube")
+
+MFU_03 <- MFU_02 %>% 
+  rownames_to_column("Tube") %>% 
+  mutate(Tube = str_replace_all(Tube, pattern = "MFU\\.FHL", replacement = ""),
+         Tube = str_replace_all(Tube, pattern = "_MFU", replacement = "")) %>% 
+  mutate(Tube = as.numeric(Tube)) %>% 
+  column_to_rownames("Tube")
+
+
 #filter metadata to just samples we kept after QC
 COI_p <- COI_m %>% 
   filter(Tube %in% rownames(COI_04))
@@ -109,14 +181,32 @@ COI_p <- COI_m %>%
   COI_p <- COI_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
     mutate(time_idx = match(tmp, unique(tmp)))
+  
+MV1_p <- MV1_m %>% 
+  filter(Tube %in% rownames(MV1_03))
+  MV1_p <- MV1_p[order(MV1_p$Tube),]
+  MV1_p <- MV1_p %>% 
+    unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
+    mutate(time_idx = match(tmp, unique(tmp)))
+  
+MFU_p <- MFU_m %>% 
+  filter(Tube %in% rownames(MFU_03))
+  MFU_p <- MFU_p[order(MFU_p$Tube),]
+  MFU_p <- MFU_p %>% 
+    unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
+    mutate(time_idx = match(tmp, unique(tmp)))
+  
+  
 #reorder to mirror metadata
-  COI_04 <- COI_04[order(as.numeric(rownames(COI_03))),]  
+COI_04 <- COI_04[order(as.numeric(rownames(COI_04))),]  
+MV1_03 <- MV1_03[order(as.numeric(rownames(MV1_03))),]
+MFU_03 <- MFU_03[order(as.numeric(rownames(MFU_03))),]
+
   
 #check ordering
 rownames(COI_04) == COI_p$Tube
-
-
-###then do the same for the other two datasets
+rownames(MV1_03) == MV1_p$Tube
+rownames(MFU_03) == MFU_p$Tube
 ```
 
 ```{r Transformations}
