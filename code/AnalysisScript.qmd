@@ -14,9 +14,9 @@ library(tidyverse)
 library(here)
 library(vegan)
 library(readxl)
-library(microViz)
+#library(microViz)
 library(lubridate)
-here::i_am("FHL_2025_eDNA-main.Rproj")
+here::i_am("FHL_2025_eDNA.Rproj")
 # Set working directory
 setwd(here())
 
@@ -53,21 +53,19 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 ```{r QualityControl}
 
 ##Quality Control
-#Pedro's change
-
-#First remove the samples that matched barcodes with previous run in the flowcell due to carryover
+#First remove the MFU samples that matched barcodes with previous run in the flowcell due to carryover
 carryover_samples <- c(
   "FHL094","FHL071","FHL095","FHL078","FHL096",
   "ENC4A","FHL097","ENC5B","FHL021","ENC6C",
   "FHL036","FHL050","PCRNa","FHL064","PCRNb"
 )
-COI_02 <- COI_01 %>%
-  select(!matches(paste(corryover_samples, collapse = "|")))
+MFU_01 <- MFU_01 %>%
+  select(!matches(paste(carryover_samples, collapse = "|")))
 
 ##here is an example
 
 #QC the raw data for min read depth
-COI_03 <- COI_02 %>% 
+COI_02 <- COI_01 %>% 
   dplyr::select(-2) %>% 
   drop_na() %>% 
   pivot_longer(cols = -BestTaxon) %>% 
@@ -152,7 +150,7 @@ MFU_m <- meta %>%
 
 
 #make rownames consistent across data and metadata, etc
-COI_04 <- COI_03 %>% 
+COI_03 <- COI_02 %>% 
   rownames_to_column("Tube") %>% 
   mutate(Tube = str_replace_all(Tube, pattern = "LoLe\\.FHL", replacement = ""),
          Tube = str_replace_all(Tube, pattern = "\\.COI.+", replacement = "")) %>% 
@@ -176,7 +174,7 @@ MFU_03 <- MFU_02 %>%
 
 #filter metadata to just samples we kept after QC
 COI_p <- COI_m %>% 
-  filter(Tube %in% rownames(COI_04))
+  filter(Tube %in% rownames(COI_03))
   COI_p <- COI_p[order(COI_p$Tube),]
   COI_p <- COI_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
@@ -198,13 +196,13 @@ MFU_p <- MFU_m %>%
   
   
 #reorder to mirror metadata
-COI_04 <- COI_04[order(as.numeric(rownames(COI_04))),]  
+COI_03 <- COI_03[order(as.numeric(rownames(COI_03))),]  
 MV1_03 <- MV1_03[order(as.numeric(rownames(MV1_03))),]
 MFU_03 <- MFU_03[order(as.numeric(rownames(MFU_03))),]
 
   
 #check ordering
-rownames(COI_04) == COI_p$Tube
+rownames(COI_03) == COI_p$Tube
 rownames(MV1_03) == MV1_p$Tube
 rownames(MFU_03) == MFU_p$Tube
 ```
