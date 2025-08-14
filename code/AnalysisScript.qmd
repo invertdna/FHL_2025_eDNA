@@ -14,9 +14,9 @@ library(tidyverse)
 library(here)
 library(vegan)
 library(readxl)
-library(microViz)
+#library(microViz)
 library(lubridate)
-library(pairwiseAdonis)               
+#library(pairwiseAdonis)               
 here::i_am("FHL_2025_eDNA.Rproj")
 # Set working directory
 setwd(here())
@@ -74,9 +74,9 @@ library(microDecon)
 
 
 # Load ASV Data
-COI_ASV_long<-read.csv(here("Data/FHL03_LoLe_ASV_table.csv"))
+COI_ASV_long<-read.csv(here("data/FHL03_LoLe_ASV_table.csv"))
 
-Neg_IDs<-read.csv(here("Data/Negative_controls.csv"))
+Neg_IDs<-read.csv(here("data/Negative_controls.csv"))
 
 # Pivot wider for micrDecon
 COI_ASV_wide <- COI_ASV_long %>%
@@ -207,6 +207,9 @@ write.csv(COI_decon_output_df, here("data/COI_ASV_decon_wide.csv"))
 write.csv(COI_removed_taxa, here("data/COI_removed_ASVs.csv"))
 write.csv(COI_decon_long, here("data/FHL03_LoLe_microDecon_ASV_table.csv"),row.names = FALSE)
 write.csv(COI_removed_long,here("data/COI_removed_ASVs_long.csv"),row.names = FALSE)
+
+
+COI_01  <- read.csv(here("data/FHL04_LoLe_taxon_table_wide_MicroDecon.csv")) #raw data
 ```
 
 ```{r QualityControl}
