@@ -248,8 +248,27 @@ MV1_05 <- MV1_04 %>%
   pivot_wider(id_cols = .row_id, names_from = BestTaxon, values_from = Reads, values_fill = 0) %>%
   arrange(.row_id) %>%
   select(-.row_id)
+
+
+##MFU Annotation curation
+MFU_05 <- MFU_04 %>%
+  mutate(.row_id = row_number()) %>%
+  pivot_longer(-.row_id, names_to = "BestTaxon", values_to = "Reads") %>%
+  #Annotation correction for geography
+  mutate(BestTaxon = if_else(BestTaxon == "Cryptacanthodes maculatus", "Cryptacanthodes giganteus", BestTaxon)) %>%
+    # Call back to genus due to conflicting annotations
+  mutate(BestTaxon = if_else(BestTaxon == "Sebastes mentella", "Sebastes", BestTaxon)) %>%
+   #Annotation correction for geography
+  mutate(BestTaxon = if_else(BestTaxon == "Cryptacanthodes maculatus", "Cryptacanthodes giganteus", BestTaxon)) %>%
+  group_by(.row_id, BestTaxon) %>%
+  summarise(Reads = sum(Reads), .groups = "drop") %>%
+  pivot_wider(id_cols = .row_id, names_from = BestTaxon, values_from = Reads, values_fill = 0) %>%
+  arrange(.row_id) %>%
+  select(-.row_id)
+
 #check
 str(MV1_05)
+str(MFU_05)
 ```
 
 ```{r Transformations}
