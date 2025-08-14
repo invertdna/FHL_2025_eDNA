@@ -51,6 +51,164 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 
 ```
 
+```{r}
+#MicroDecon on COI ASV table
+
+# Load Dependencies
+
+# Check if devtools is installed--needed to install microDecon
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+
+# Load devtools
+library(devtools)
+
+# Check if microDecon is installed
+if (!requireNamespace("microDecon", quietly = TRUE)) {
+  devtools::install_github("donaldtmcknight/microDecon")
+}
+
+# Load microDecon
+library(microDecon)
+
+
+# Load ASV Data
+COI_ASV_long<-read.csv(here("Data/FHL03_LoLe_ASV_table.csv"))
+
+Neg_IDs<-read.csv(here("Data/Negative_controls.csv"))
+
+# Pivot wider for micrDecon
+COI_ASV_wide <- COI_ASV_long %>%
+  select(Sample_name, Hash, nReads) %>%
+  pivot_wider(
+    names_from = Sample_name,
+    values_from = nReads,
+    values_fill = 0
+  )
+
+COI_wide_reordered <- {
+  
+  # Step 1: Map ordered labels to matching columns
+  neg_cols_ordered_full <- Neg_IDs %>%
+    arrange(Control_stage) %>%
+    pull(Label) %>%
+    # For each label, get all COI_wide columns that contain it
+    lapply(function(x) colnames(COI_ASV_wide)[str_detect(colnames(COI_ASV_wide), fixed(x))]) %>%
+    unlist()
+  
+ # Reorder: Hash first, then neg cols, then everything else
+  COI_ASV_wide %>%
+    select(Hash,
+           all_of(neg_cols_ordered_full),
+           setdiff(colnames(.), c("Hash", neg_cols_ordered_full)))
+}
+
+#Add FHL0 or FHL00 before tube number for easier string identification
+meta_rn <- meta %>%
+  mutate(
+    Tube.Number = ifelse(
+      nchar(as.character(Tube.Number)) == 2,
+      paste0("FHL0", Tube.Number),   # already two digits → FHL0xx
+      paste0("FHL00", Tube.Number)   # one digit → FHL00x
+    )
+  )
+
+#Need to create a biological replicate "group" column (combine Data_Day.Night_Treatment)
+meta_rn <- meta_rn %>%
+  
+  mutate(group = paste(Date, Day.Night, Treatment..Light..NoLight..FieldNegative., sep = "_"))
+
+
+#Get ordered groups of sample information
+
+#Order Tube.Number by group only for samples
+tube_order_sam <- meta_rn %>%
+  filter(Treatment..Light..NoLight..FieldNegative. !="FieldNegative")%>%
+  arrange(group) %>%        # order by group
+  pull(Tube.Number)
+
+# For each tube number of the sample, find matching columns in COI_wide_ordered (some tubes numbers may be missing after sequencing run due to filtering of low quality reads)
+matched_cols <- unlist(lapply(tube_order_sam, function(tn) {
+  grep(tn, colnames(COI_wide_reordered), value = TRUE)
+}))
+
+# Reorder COI_wide_ordered
+COI_wide_grouped <- COI_wide_reordered %>%
+  select(all_of(matched_cols))
+
+# Keep only matched rows from Meta for counting how many reps are in each group left in our final data
+Meta_sub <- meta_rn %>%
+  filter(Tube.Number %in% str_extract(colnames(COI_wide_grouped), paste(Tube.Number, collapse = "|")))
+
+# Count samples per groups that made it to final seq data
+sample_counts <- Meta_sub %>%
+  group_by(group) %>%
+  summarise(sample_count = n())
+
+
+#Combine back with Neg controls and put at the beginning, do not need c
+COI_for_decon<-cbind(COI_wide_reordered[,c(1:13)],COI_wide_grouped)#12 negative controls
+
+# First group is assumed to be the blanks (e.g., "negative controls")
+num.blanks <- as.numeric(length(Neg_IDs$Name))
+
+# The rest are the replicate counts per group
+numb.ind <- as.numeric(sample_counts$sample_count)
+
+#make sure ASV table is a dataframe
+COI_for_decon<-as.data.frame(COI_for_decon)
+
+#check that first column is character and others are integers/numeric
+str(COI_for_decon)
+column_sums<-colSums(COI_for_decon[,2:ncol(COI_for_decon)])#check if any sums are zero if so need to remove
+
+#Run microDecon, Hash first column, followed by blanks, then grouped samples
+COI_decon_output <- decon(
+  COI_for_decon,
+  num.blanks,
+  numb.ind, 
+  taxa=FALSE
+)
+
+# Pull out the decontaminated df
+COI_decon_output_df<-COI_decon_output[["decon.table"]]
+
+# Pull out the df of reads that were removed
+COI_removed_taxa<-COI_decon_output[["reads.removed"]]
+
+COI_decon_long <- COI_decon_output_df %>%
+  # Remove the Mean.blank column
+  select(-Mean.blank) %>%
+  # Pivot all columns except Hash
+  pivot_longer(
+    cols = -Hash,
+    names_to = "Sample_name",
+    values_to = "nReads"
+  ) %>%
+  #Add Label column to match original dataset
+  mutate(Label="LoLe") %>% 
+  relocate(Sample_name, .before = "Hash") %>% 
+  relocate(Label, .after = "Sample_name")    # move it after column Hash
+
+
+COI_removed_long <- COI_removed_taxa %>%
+  # Remove the Mean.blank column
+  select(-Mean.blank) %>%
+  # Pivot all columns except Hash
+  pivot_longer(
+    cols = -Hash,
+    names_to = "Sample_name",
+    values_to = "nReads"
+  )
+
+
+write.csv(COI_decon_output_df, here("data/COI_ASV_decon_wide.csv"))
+write.csv(COI_removed_taxa, here("data/COI_removed_ASVs.csv"))
+write.csv(COI_decon_long, here("data/FHL03_LoLe_microDecon_ASV_table.csv"),row.names = FALSE)
+write.csv(COI_removed_long,here("data/COI_removed_ASVs_long.csv"),row.names = FALSE)
+```
+
 ```{r QualityControl}
 
 ##Quality Control
