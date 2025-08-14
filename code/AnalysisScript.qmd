@@ -16,6 +16,7 @@ library(vegan)
 library(readxl)
 library(microViz)
 library(lubridate)
+library(pairwiseAdonis)               
 here::i_am("FHL_2025_eDNA-main.Rproj")
 # Set working directory
 setwd(here())
@@ -62,7 +63,7 @@ carryover_samples <- c(
   "FHL036","FHL050","PCRNa","FHL064","PCRNb"
 )
 COI_02 <- COI_01 %>%
-  select(!matches(paste(corryover_samples, collapse = "|")))
+  select(!matches(paste(carryover_samples, collapse = "|")))
 
 ##here is an example
 
@@ -169,7 +170,7 @@ MV1_03 <- MV1_02 %>%
 MFU_03 <- MFU_02 %>% 
   rownames_to_column("Tube") %>% 
   mutate(Tube = str_replace_all(Tube, pattern = "MFU\\.FHL", replacement = ""),
-         Tube = str_replace_all(Tube, pattern = "_MFU", replacement = "")) %>% 
+         Tube = str_replace_all(Tube, pattern = "_MFU+", replacement = "")) %>% 
   mutate(Tube = as.numeric(Tube)) %>% 
   column_to_rownames("Tube")
 
@@ -209,19 +210,80 @@ rownames(MV1_03) == MV1_p$Tube
 rownames(MFU_03) == MFU_p$Tube
 ```
 
+```{r}
+
+```
+
 ```{r Transformations}
 
 ##COI
     #make pres/absence dataset
-    COI_bin = COI_03
+    COI_bin = COI_04
       COI_bin[COI_bin>0]<-1  
     
     #make eDNA index dataset
-    COI_idx = COI_03 %>% 
+    COI_idx = COI_04 %>% 
        eDNA_index()
     
     #make proportion dataset  
   
+```
+
+```{r NMDS}
+
+### COI 
+
+  ## pres/absence
+  dist_coi <- COI_bin %>% 
+    vegdist(method = "jaccard", binary = T)
+  
+  MDS_coi <- dist_coi %>% 
+    metaMDS(trymax = 1000)
+  
+  COI_p %>%
+    bind_cols(MDS_coi$points) %>%
+    ggplot(aes(x = MDS1, y = MDS2, color = Day.Night, shape = Treatment)) +
+    geom_point() +
+    stat_chull(aes(fill = Day.Night), alpha = 0.3) +
+    theme_minimal()
+  
+  # permanova
+  res <- adonis2(as.matrix(dist_coi) ~ interaction(COI_p$Day.Night,COI_p$Treatment)) 
+  res
+  
+  # posthoc
+  pairwise.adonis2(dist_coi ~ MDS_coi, data= COI_p %>% mutate(MDS_coi=paste0(Day.Night,Treatment)), COI_p.adjust.m = "BY")
+
+  # permutational dispersion
+  disp_coi <- betadisper(dist_coi,interaction(COI_p$Day.Night,COI_p$Treatment))
+  perm_disp_res <- permutest(disp_coi, pairwise = T ,permutations = how(nperm=999))
+  perm_disp_res
+  
+  ## eDNA index
+  dist_coi_idx <- COI_idx %>%
+    vegdist(method = "bray")
+  
+  MDS_coi_idx <- dist_coi_index %>%
+    metaMDS(trymax = 1000)
+  
+  COI_p %>%
+    bind_cols(MDS_coi_idx$points) %>%
+    ggplot(aes(x = MDS1, y = MDS2, color = Day.Night, shape = Treatment)) +
+    geom_point() +
+    stat_chull(aes(fill = Day.Night), alpha = 0.3) +
+    theme_minimal()
+  
+  # permanova
+  res <- adonis2(as.matrix(dist_coi_index) ~ interaction(COI_p$Day.Night,COI_p$Treatment))
+  res
+
+  # posthoc
+  pairwise.adonis2(dist_coi_index ~ MDS_coi_idx, data= COI_p %>% mutate(MDS_coi_idx=paste0(Day.Night,Treatment)), COI_p.adjust.m = "BY")
+
+  # permutational dispersion
+  disp_coi_idx <- betadisper(dist_coi_idx,interaction(COI_p$Day.Night,COI_p$Treatment))
+  PERMDISP <- permutest(disp_coi_idx, pairwise = T ,permutations = how(nperm=999))
+  PERMDISP
 ```
 
 ## Abstract
