@@ -57,33 +57,33 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 #First remove the MFU samples that matched barcodes with previous run in the flowcell due to carryover
 carryover_samples <- c(
   "FHL094","FHL071","FHL095","FHL078","FHL096",
-  "ENC4A","FHL097","ENC5B","FHL021","ENC6C",
+  "ENC4A","FHL097","ENC5B", "ENC3","FHL021","ENC6C",
   "FHL036","FHL050","PCRNa","FHL064","PCRNb"
 )
 
-COI_02 <- COI_01 %>%
+COI_01 <- COI_01 %>%
   select(!matches(paste(carryover_samples, collapse = "|")))
 
 ##here is an example
 
 #QC the raw data for min read depth
 COI_02 <- COI_01 %>% 
-  dplyr::select(-2) %>% 
+  dplyr::select(-Class) %>% #Remove Class column
   drop_na() %>% 
-  pivot_longer(cols = -BestTaxon) %>% 
-  filter(value > 0) %>% 
-  group_by(BestTaxon) %>% 
-  add_tally() %>% 
-  filter(n > 5) %>% ##FILTER for min occurrences
-  dplyr::select(-n) %>% 
-  pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+  pivot_longer(cols = -BestTaxon) %>% #Make it a long df
+  filter(value > 0) %>% #filter out all spcies in samples with no detection
+  group_by(BestTaxon) %>% #group by species
+  add_tally() %>% #Add count of occurences
+  filter(n > 5) %>% ##FILTER for min 5 occurrences
+  dplyr::select(-n) %>% #remove the column of occurences 
+  pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% #conevrt it back to wide dataframe
   column_to_rownames("BestTaxon") %>% 
   t() %>% 
   as.data.frame() %>% 
-  mutate(tot = rowSums(.)) %>% 
+  mutate(tot = rowSums(.)) %>% #Compute the total number of reads per sample
   filter(tot > 10000) %>% ##FILTER for total read-depth in sample
-  dplyr::select(-tot) %>% 
-  dplyr::select(which(colSums(.) > 0))
+  dplyr::select(-tot) %>% #remove the tot reads per sample column
+  dplyr::select(which(colSums(.) > 0)) #Filter out all sepcies that have 0 obs in all samples
 
 MV1_02 <- MV1_01 %>% 
   dplyr::select(-2) %>% 
@@ -266,8 +266,9 @@ str(MV1_05)
       COI_bin[COI_bin>0]<-1  
     
     #make eDNA index dataset
-    COI_idx = COI_04 %>% 
-       eDNA_index()
+    COI_idx = COI_04 %>%
+      t() %>% 
+      eDNA_index()
     
     #make proportion dataset  
   
@@ -305,18 +306,28 @@ str(MV1_05)
   
   ## eDNA index
   dist_coi_idx <- COI_idx %>%
+    t() %>% 
     vegdist(method = "bray")
   
-  MDS_coi_idx <- dist_coi_index %>%
+  MDS_coi_idx <- dist_coi_idx %>%
     metaMDS(trymax = 1000)
   
-  COI_p %>%
-    bind_cols(MDS_coi_idx$points) %>%
-    ggplot(aes(x = MDS1, y = MDS2, color = Day.Night, shape = Treatment)) +
-    geom_point() +
-    stat_chull(aes(fill = Day.Night), alpha = 0.3) +
-    theme_minimal()
+  nMDS_plot <- COI_p %>% 
+    bind_cols(MDS_coi_idx$points) %>% 
+    group_by(Day.Night,Treatment) %>% 
+    mutate(cx = mean(MDS1, na.rm = TRUE),
+         cy = mean(MDS2, na.rm = TRUE))
   
+  nMDS_plot %>%
+    ggplot(aes(x = MDS1, y = MDS2, color = Day.Night, shape = Treatment)) +
+    geom_segment(aes(xend = cx, yend = cy), alpha = 0.25, show.legend = FALSE) +
+    stat_ellipse(aes(color = Day.Night),fill=NA,geom = "polygon", alpha = 0.20,  level = 0.75) +
+    geom_point(size = 3) +
+    geom_point(data = nMDS_plot %>% group_by(Day.Night,Treatment) %>% summarise(cx=first(cx),cy=first(cy)),
+               aes(x = cx, y = cy, color = Day.Night),
+               shape = 4, stroke = 2, size = 4, inherit.aes = FALSE) +
+    theme_bw()
+    
   # permanova
   res <- adonis2(as.matrix(dist_coi_index) ~ interaction(COI_p$Day.Night,COI_p$Treatment))
   res
