@@ -219,8 +219,9 @@ carryover_samples <- c(
   "FHL036","FHL050","PCRNa","FHL064","PCRNb"
 )
 
-COI_02 <- COI_01 %>%
-  select(!matches(paste(carryover_samples, collapse = "|")))
+##JUST for MFU, not COI --- correct?
+# COI_02 <- COI_01 %>%
+#   select(!matches(paste(carryover_samples, collapse = "|")))
 
 ##here is an example
 
@@ -335,25 +336,24 @@ MFU_03 <- MFU_02 %>%
 #filter metadata to just samples we kept after QC
 COI_p <- COI_m %>% 
   filter(Tube %in% rownames(COI_03))
-  COI_p <- COI_p[order(COI_p$Tube),]
   COI_p <- COI_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
     mutate(time_idx = match(tmp, unique(tmp)))
+  COI_p <- COI_p[order(COI_p$Tube),]
   
 MV1_p <- MV1_m %>% 
   filter(Tube %in% rownames(MV1_03))
-  MV1_p <- MV1_p[order(MV1_p$Tube),]
   MV1_p <- MV1_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
     mutate(time_idx = match(tmp, unique(tmp)))
+  MV1_p <- MV1_p[order(MV1_p$Tube),]
   
 MFU_p <- MFU_m %>% 
   filter(Tube %in% rownames(MFU_03))
-  MFU_p <- MFU_p[order(MFU_p$Tube),]
   MFU_p <- MFU_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
     mutate(time_idx = match(tmp, unique(tmp)))
-  
+  MFU_p <- MFU_p[order(MFU_p$Tube),]
   
 #reorder to mirror metadata
 COI_03 <- COI_03[order(as.numeric(rownames(COI_03))),]  
