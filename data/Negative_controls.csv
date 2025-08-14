@@ -1,0 +1,13 @@
+﻿Label,Name,Control_stage
+FHL021,FHL021-COI-N2-FN_R1.fastq.gz,Field
+FHL036,FHL036-COI-N3-FN_R1.fastq.gz,Field
+FHL050,FHL050-COI-N4-FN_R1.fastq.gz,Field
+FHL064,FHL064-COI-N5-FN_R1.fastq.gz,Field
+FHL071,FHL071-COI-D6-FN_R1.fastq.gz,Field
+FHL078,FHL078-COI-N6-FN_R1.fastq.gz,
+ENC3,ENC3-COI_R1.fastq.gz,Extraction
+ENC4A,ENC4A-COI_R1.fastq.gz,Extraction
+ENC5B,ENC5B-COI_R1.fastq.gz,Extraction
+ENC6C,ENC6C-COI_R1.fastq.gz,Extraction
+PCRNa,PCRNa-COI_R1.fastq.gz,PCR
+PCRNb,PCRNb-COI_R1.fastq.gz,PCR
