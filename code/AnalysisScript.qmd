@@ -17,6 +17,25 @@ library(readxl)
 #library(microViz)
 library(lubridate)
 #library(pairwiseAdonis)               
+
+# Check if devtools is installed--needed to install microDecon
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+
+# Load devtools
+library(devtools)
+
+# Check if microDecon is installed
+if (!requireNamespace("microDecon", quietly = TRUE)) {
+  devtools::install_github("donaldtmcknight/microDecon")
+}
+
+# Load microDecon
+library(microDecon)
+
+
+
 here::i_am("FHL_2025_eDNA.Rproj")
 # Set working directory
 setwd(here())
@@ -39,6 +58,7 @@ eDNA_index <- function(community_matrix){
 
 meta <- read.csv(here("data/Field_Data_Sheet_Digitized.csv")) #metadata
 
+h <- read.csv("data/environmental_covariates.csv") #environmental covariates (temperature, tide, etc)
 
 ###load data: COI
 COI_01 <- read.csv(here("data/FHL04_LoLe_taxon_table_wide.csv")) #raw data
@@ -55,23 +75,6 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 #MicroDecon on COI ASV table
 
 # Load Dependencies
-
-# Check if devtools is installed--needed to install microDecon
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
-}
-
-# Load devtools
-library(devtools)
-
-# Check if microDecon is installed
-if (!requireNamespace("microDecon", quietly = TRUE)) {
-  devtools::install_github("donaldtmcknight/microDecon")
-}
-
-# Load microDecon
-library(microDecon)
-
 
 # Load ASV Data
 COI_ASV_long<-read.csv(here("data/FHL03_LoLe_ASV_table.csv"))
@@ -341,21 +344,30 @@ COI_p <- COI_m %>%
   COI_p <- COI_p[order(COI_p$Tube),]
   COI_p <- COI_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
-    mutate(time_idx = match(tmp, unique(tmp)))
+    mutate(time_idx = match(tmp, unique(tmp))) %>% 
+  mutate(datetime = round_date(datetime, "hour")) %>% 
+  mutate(Date.and.Time = datetime) %>% 
+  left_join(h %>% mutate(Date.and.Time = as_datetime(Date.and.Time)))
   
 MV1_p <- MV1_m %>% 
   filter(Tube %in% rownames(MV1_03))
   MV1_p <- MV1_p[order(MV1_p$Tube),]
   MV1_p <- MV1_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
-    mutate(time_idx = match(tmp, unique(tmp)))
+    mutate(time_idx = match(tmp, unique(tmp))) %>% 
+  mutate(datetime = round_date(datetime, "hour")) %>% 
+  mutate(Date.and.Time = datetime) %>% 
+  left_join(h %>% mutate(Date.and.Time = as_datetime(Date.and.Time)))
   
 MFU_p <- MFU_m %>% 
   filter(Tube %in% rownames(MFU_03))
   MFU_p <- MFU_p[order(MFU_p$Tube),]
   MFU_p <- MFU_p %>% 
     unite(c(Date, Day.Night, Treatment), col = tmp, remove = F) %>% 
-    mutate(time_idx = match(tmp, unique(tmp)))
+    mutate(time_idx = match(tmp, unique(tmp))) %>% 
+  mutate(datetime = round_date(datetime, "hour")) %>% 
+  mutate(Date.and.Time = datetime) %>% 
+  left_join(h %>% mutate(Date.and.Time = as_datetime(Date.and.Time)))
   
   
 #reorder to mirror metadata
