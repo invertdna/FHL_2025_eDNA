@@ -90,7 +90,7 @@ MV1_02 <- MV1_01 %>%
   filter(value > 0) %>% 
   group_by(BestTaxon) %>% 
   add_tally() %>% 
-  filter(n > 5) %>% ##FILTER for min occurrences
+  filter(n > 0) %>% ##FILTER for min occurrences
   dplyr::select(-n) %>% 
   pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
   column_to_rownames("BestTaxon") %>% 
@@ -205,6 +205,51 @@ MFU_03 <- MFU_03[order(as.numeric(rownames(MFU_03))),]
 rownames(COI_03) == COI_p$Tube
 rownames(MV1_03) == MV1_p$Tube
 rownames(MFU_03) == MFU_p$Tube
+
+#remove lab contaminants and NA
+contaminants <- c(
+  ##Human, pets, and food items
+  "Homo sapiens","Homo", "Gorilla",
+  "Bos taurus","Bos","Sus scrofa",
+  "Canis lupus","Felis catus","Felis",
+  "Meleagris gallopavo","Equus caballus",
+  "Ovis"
+  #Probable water contaminants
+)
+MV1_04  <- MV1_03  %>%
+  select(-any_of(contaminants))
+MFU_04  <- MFU_03  %>%
+  select(-any_of(contaminants))
+COI_04  <- COI_03  %>%
+  select(-any_of(contaminants))
+
+##MV1 Annotation curation
+MV1_05 <- MV1_04 %>%
+  mutate(.row_id = row_number()) %>%
+  pivot_longer(-.row_id, names_to = "BestTaxon", values_to = "Reads") %>%
+  # missannotated pseudogene
+  mutate(BestTaxon = if_else(BestTaxon == "Phocoenoides", "Phocoena phocoena", BestTaxon)) %>%
+  # Great blue heron, not the European grey
+  mutate(BestTaxon = if_else(BestTaxon == "Ardea cinerea", "Ardea herodias", BestTaxon)) %>%
+  # Change to locally occurring sp. in the same genus
+  mutate(BestTaxon = if_else(BestTaxon == "Cryptacanthodes maculatus", "Cryptacanthodes aleutensis", BestTaxon)) %>%
+  # Genus call is possible
+  mutate(BestTaxon = if_else(BestTaxon == "Gadidae", "Gadus", BestTaxon)) %>%
+  # Call to only local species in the genus
+  mutate(BestTaxon = if_else(BestTaxon == "Hirundo", "Hirundo rustica", BestTaxon)) %>%
+  # Unambiguous considering local only
+  mutate(BestTaxon = if_else(BestTaxon == "Pholis", "Pholis ornata", BestTaxon)) %>%
+  # Change to locally occurring sp. in the same genus
+  mutate(BestTaxon = if_else(BestTaxon == "Progne chalybea", "Progne subis", BestTaxon)) %>%
+  # Call back to genus due to conflicting annotations
+  mutate(BestTaxon = if_else(BestTaxon == "Sebastes mentella", "Sebastes", BestTaxon)) %>%
+  group_by(.row_id, BestTaxon) %>%
+  summarise(Reads = sum(Reads), .groups = "drop") %>%
+  pivot_wider(id_cols = .row_id, names_from = BestTaxon, values_from = Reads, values_fill = 0) %>%
+  arrange(.row_id) %>%
+  select(-.row_id)
+#check
+str(MV1_05)
 ```
 
 ```{r Transformations}
