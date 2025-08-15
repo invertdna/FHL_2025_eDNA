@@ -223,12 +223,10 @@ carryover_samples <- c(
   "FHL094","FHL071","FHL095","FHL078","FHL096",
   "ENC4A","FHL097","ENC5B", "ENC3","FHL021","ENC6C",
   "FHL036","FHL050","PCRNa","FHL064","PCRNb"
-)
+) ##Just apply to MFU, right?
 
-COI_01 <- COI_01 %>%
+MFU_01 <- MFU_01 %>% 
   select(!matches(paste(carryover_samples, collapse = "|")))
-
-##here is an example
 
 #QC the raw data for min read depth
 COI_02 <- COI_01 %>% 
@@ -463,7 +461,82 @@ str(MFU_05)
       eDNA_index()
     
     #make proportion dataset  
-  
+    COI_prop <- COI_04 %>% 
+      rownames_to_column("Tube") %>% 
+      pivot_longer(-Tube) %>% 
+      group_by(Tube) %>% 
+      mutate(value = value/sum(value)) %>% 
+      pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+      column_to_rownames("Tube")
+    
+    #make common proportion dataset  
+    COI_common_prop <- COI_04 %>% 
+      dplyr::select(which(colSums(.) > 5000)) %>%  # threshold for plotting
+      rownames_to_column("Tube") %>% 
+      pivot_longer(-Tube) %>% 
+      group_by(Tube) %>% 
+      mutate(value = value/sum(value)) %>% 
+      pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+      column_to_rownames("Tube")
+    
+##MV1
+    #make pres/absence dataset
+    MV1_bin = MV1_05
+      MV1_bin[MV1_bin>0]<-1  
+    
+    #make eDNA index dataset
+    MV1_idx = MV1_05 %>%
+      t() %>% 
+      eDNA_index()
+    
+    #make proportion dataset  
+    MV1_prop <- MV1_05 %>% 
+      rownames_to_column("Tube") %>% 
+      pivot_longer(-Tube) %>% 
+      group_by(Tube) %>% 
+      mutate(value = value/sum(value)) %>% 
+      pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+      column_to_rownames("Tube")
+    
+    #make common proportion dataset  
+    MV1_common_prop <- MV1_05 %>% 
+      dplyr::select(which(colSums(.) > 5000)) %>%  # threshold for plotting
+      rownames_to_column("Tube") %>% 
+      pivot_longer(-Tube) %>% 
+      group_by(Tube) %>% 
+      mutate(value = value/sum(value)) %>% 
+      pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+      column_to_rownames("Tube")
+    
+##MFU    
+    #make pres/absence dataset
+    MFU_bin = MFU_05
+      MFU_bin[MFU_bin>0]<-1  
+    
+    #make eDNA index dataset
+    MFU_idx = MFU_05 %>%
+      t() %>% 
+      eDNA_index()
+    
+    #make proportion dataset  
+    MFU_prop <- MFU_05 %>% 
+      rownames_to_column("Tube") %>% 
+      pivot_longer(-Tube) %>% 
+      group_by(Tube) %>% 
+      mutate(value = value/sum(value)) %>% 
+      pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+      column_to_rownames("Tube")
+    
+    #make common proportion dataset  
+    MFU_common_prop <- MFU_05 %>% 
+      dplyr::select(which(colSums(.) > 5000)) %>%  # threshold for plotting
+      rownames_to_column("Tube") %>% 
+      pivot_longer(-Tube) %>% 
+      group_by(Tube) %>% 
+      mutate(value = value/sum(value)) %>% 
+      pivot_wider(names_from = name, values_from = value, values_fill = 0) %>% 
+      column_to_rownames("Tube")
+    
 ```
 
 ```{r NMDS}
