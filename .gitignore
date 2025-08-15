@@ -1,0 +1,16 @@
+# OneDrive / Windows sync junk
+*.tmp
+*.temp
+*.lnk
+desktop.ini
+Thumbs.db
+~$*
+.OneDrive*
+.onedrive*
+
+# RStudio project files
+.Rproj.user/
+*.Rproj
+.Rhistory
+.RData
+
