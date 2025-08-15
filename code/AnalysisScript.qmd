@@ -61,7 +61,7 @@ meta <- read.csv(here("data/Field_Data_Sheet_Digitized.csv")) #metadata
 h <- read.csv("data/environmental_covariates.csv") #environmental covariates (temperature, tide, etc)
 
 ###load data: COI
-COI_01 <- read.csv(here("data/FHL04_LoLe_taxon_table_wide.csv")) #raw data
+COI_01 <- read.csv(here("data/FHL04_LoLe_taxon_table_wide_MicroDecon.csv")) #raw data
 
 ###load data: MV1
 MV1_01 <- read.csv(here("data/FHL02_MV1_taxon_table_wide.csv")) #raw data
@@ -71,7 +71,8 @@ MFU_01 <- read.csv(here("data/FHL03_MFU_taxon_table_wide.csv")) #raw data
 
 ```
 
-```{r}
+```{r microdecon}
+#| include: false
 #MicroDecon on COI ASV table
 
 # Load Dependencies
@@ -440,12 +441,8 @@ MFU_05 <- MFU_04 %>%
   select(-.row_id)
 
 #check
-str(MV1_05)
-str(MFU_05)
-```
-
-```{r}
-
+# str(MV1_05)
+# str(MFU_05)
 ```
 
 ```{r Transformations}
@@ -539,11 +536,10 @@ str(MFU_05)
     
 ```
 
-```{r NMDS}
+```{r Distance_and_NMDS}
 
 ### COI 
 
-  ## pres/absence
   dist_coi <- COI_idx %>% 
     t() %>% 
     vegdist(method = "bray", binary = T)
@@ -552,18 +548,24 @@ str(MFU_05)
     as.matrix() %>% 
     metaMDS(trymax = 1000)
   
+  #Look at autoregression
   COI_p %>%
-    bind_cols(MDS_coi$points) %>%
-    ggplot(aes(x = MDS1, y = MDS2, color = as.factor(time_idx))) +
-    geom_point() +
-    stat_chull(aes(fill = interaction(Day.Night, Treatment)), alpha = 0.3) +
-    geom_label(aes(x = MDS1, y = MDS2, label = time_idx)) +
-    theme_minimal()
-  
-  # permanova
-  res <- adonis2(as.matrix(dist_coi) ~ Day.Night + time_idx + time_idx%in%Treatment, 
-                 by = "terms",
-                 data = COI_p) 
+  mutate(day_idx = match(COI_p$Date, unique(COI_p$Date))) %>% 
+  mutate(half_idx = ifelse(Date < "2025-07-30", "A", "B")) %>% 
+  mutate(twoday_idx = COI_p$Date %>% cut(4)) %>%
+  bind_cols(MDS_COI$points) %>%
+  # filter(half_idx == "A") %>%
+  # filter(Day.Night == "night") %>% 
+  ggplot(aes(x = MDS1, y = MDS2, color = as.factor(half_idx))) +
+  geom_point() +
+  stat_chull(aes(fill = interaction(Day.Night, Treatment)), alpha = 0.3) +
+  geom_label(aes(x = MDS1, y = MDS2, label = as.factor(day_idx))) +
+  theme_minimal()
+
+# permanova
+res <- adonis2(dist_COI ~ half_idx + Day.Night + Treatment%in%Day.Night, data = COI_p %>%
+          mutate(half_idx = ifelse(Date < "2025-07-30", "A", "B")), by = "terms")
+
   res
   
   # posthoc
@@ -650,8 +652,6 @@ COI_common_prop %>%
                   expand = FALSE)
  
 ```
-
-
 
 ## Abstract
 
