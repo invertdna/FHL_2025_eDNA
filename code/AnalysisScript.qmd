@@ -672,6 +672,56 @@ res <- adonis2(dist_COI ~ half_idx + Day.Night + Treatment%in%Day.Night, data = 
   PERMDISP
 ```
 
+```{r indicator_species_analysis}
+
+grp <- with(COI_p, interaction(Day.Night,Treatment), drop = TRUE)
+ind <- COI_idx %>% t() %>%
+	multipatt(grp_4, func = "IndVal.g", restcomb = c(1,2,3,4), control = how(nperm = 999))
+
+summary(ind)
+
+# Filter list by p-value
+ind_result <- ind$sign
+
+ind_result <- ind_result %>%
+	mutate(species = rownames(ind_result))
+
+ind_result <- ind_result %>%
+	filter(p.value < 0.01)
+
+ind_result
+
+# Pivot longer the COI_idx
+COI_idx_long <- COI_idx %>%
+	rownames_to_column("species") %>%
+	pivot_longer(cols = -species,
+							 names_to = "Tube",
+							 values_to = "eDNA_index") %>%
+	mutate(Tube=as.numeric(Tube)) %>%
+	left_join(COI_p, by="Tube") %>%
+	left_join(COI_01 %>% select("BestTaxon", "Class"), by=c("species"="BestTaxon")) %>%
+	mutate(Treatment_int=paste0('s.',Day.Night)) %>%
+	left_join(.,ind_result,by=c('species')) %>%
+	filter(!is.na(index))
+
+
+COI_idx_long %>% mutate(Day.Night=factor(Day.Night,levels = c('day','night'))) %>% 
+	filter(index%in%c(1)) %>%
+	ggline(., x='Day.Night', y='eDNA_index',color = 'species',add = c('mean_se','jitter'),
+				 facet.by = c("Class"))+
+	theme(legend.position = "right") 
+
+COI_idx_long %>% mutate(Day.Night=factor(Day.Night,levels = c('day','night'))) %>% 
+	filter(index%in%c(2,4)) %>%
+	filter(Day.Night=='night') %>% 
+	#filter(Class == "Polychaeta") %>%
+	ggline(., x='Treatment', y='eDNA_index',color = 'species',add = c('mean_se','jitter'),
+				 facet.by = c("Class"))+
+	theme(legend.position = "right") 
+
+	
+```
+
 ```{r StackedBars}
 
 #TODO straighten plotting details for shading and labeling, etc
