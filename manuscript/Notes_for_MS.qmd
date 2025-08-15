@@ -1,0 +1,21 @@
+---
+title: "Notes for Manuscript"
+format: html
+editor: visual
+---
+
+## Notes for our manuscript
+
+## Abstract
+
+**Analyzing genetic material derived from water samples — environmental DNA (eDNA) — has become a common way of surveying marine environments for suites of species having ecological or conservation interest. Here we employ a replicated, nested study design to test for differences in nearshore marine communities between day and night – and for the effect of artificial light treatment during each period. We use a rapid assessment method, extracting, amplifying, and sequencing on an Oxford Nanopore sequencer within hours to days of initial collection, within a week yielding viable data for approximately 700 taxa. We find the strongest differences in photosynthetic species – nearly uniformly having higher richness and abundance indices in daytime — and notable nighttime highs for heterotrophic dinoflagellate, reproductive polychaetes, hydrozoans, and other animal species. We find little response associated with light treatment, suggesting either that LED light has little effect on communities, or perhaps more likely, that recoverable eDNA signals change at a time lag relative to visible changes in the habitat’s ecological communities.**
+
+## Introduction
+
+## Methods
+
+## Results
+
+## Conclusion
+
+### References
