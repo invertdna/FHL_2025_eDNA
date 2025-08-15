@@ -225,6 +225,7 @@ carryover_samples <- c(
   "ENC4A","FHL097","ENC5B", "ENC3","FHL021","ENC6C",
   "FHL036","FHL050","PCRNa","FHL064","PCRNb"
 ) ##Just apply to MFU, right?
+## Gled & Pedro: YES!
 
 MFU_01 <- MFU_01 %>% 
   select(!matches(paste(carryover_samples, collapse = "|")))
@@ -336,7 +337,7 @@ MFU_03 <- MFU_02 %>%
   mutate(Tube = as.numeric(Tube)) %>% 
   column_to_rownames("Tube")
 
-#hh
+
 #filter metadata to just samples we kept after QC
 COI_p <- COI_m %>% 
   filter(Tube %in% rownames(COI_03))
@@ -397,10 +398,61 @@ MFU_04  <- MFU_03  %>%
 COI_04  <- COI_03  %>%
   select(-any_of(contaminants))
 
+## COI Annotation curation
+COI_05 <- COI_04 %>%
+  rownames_to_column('tube_no') %>%
+  pivot_longer(cols=-tube_no, names_to = "BestTaxon", values_to = "Reads") %>%
+  # Different species reported in the area (same genus)
+  mutate(BestTaxon = if_else(BestTaxon == "Acrochaetium alariae", "Acrochaetium secundatum", BestTaxon)) %>%
+  # Two different sp reported, call back to genus
+  mutate(BestTaxon = if_else(BestTaxon == "Bougainvillia superciliaris", "Bougainvillia", BestTaxon)) %>%
+  # Up to spp in this area
+  mutate(BestTaxon = if_else(BestTaxon == "Calycella", "Calycella syringa", BestTaxon)) %>%
+  # Change to genus present in the area
+  mutate(BestTaxon = if_else(BestTaxon == "Obeliidae", "Obelia", BestTaxon)) %>%
+  # Change to genus present in the area
+  mutate(BestTaxon = if_else(BestTaxon == "Cocconeiopsis kantsiensis", "Cocconeiopsis", BestTaxon)) %>%
+  # Change to genus present in the area
+  mutate(BestTaxon = if_else(BestTaxon == "Kurtiella bidentata", "Bivalvia", BestTaxon)) %>%
+  # rename to spp present in the area:
+  mutate(BestTaxon = if_else(BestTaxon == "Nuttallia ezonis", "Nuttallia obscurata", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Grammonema striatula", "Grammonema", BestTaxon)) %>%
+  # Change to genus present in the area
+  mutate(BestTaxon = if_else(BestTaxon == "Kappaphycus", "Gigartinales", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Mycale cecilia", "Mycale", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Nannochloropsis granulata", "Nannochloropsis", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Phaeocystis globosa", "Phaeocystis", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Haslea avium", "Haslea", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Skeletonema japonicum", "Skeletonema", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Yihiella yeosuensis", "Yihiella", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Turritopsis lata", "Turritopsis", BestTaxon)) %>%
+  # Change to genus present in the area
+  mutate(BestTaxon = if_else(BestTaxon == "Vimineoleathesia japonica", "Chordariaceae", BestTaxon)) %>%
+  # Change to genus present in the area
+  mutate(BestTaxon = if_else(BestTaxon == "[Olpidiopsis] porphyrae var. scotiae (nom. inval.)", "Chordariaceae", BestTaxon)) %>%
+  # rename to spp present in the area:
+  mutate(BestTaxon = if_else(BestTaxon == "Stauridiosarsia producta", "Stauridiosarsia cliffordi", BestTaxon)) %>%
+  # call back to genus:
+  mutate(BestTaxon = if_else(BestTaxon == "Thalassiosira punctigera", "Thalassiosira", BestTaxon)) %>%
+  group_by(tube_no, BestTaxon) %>%
+  summarise(Reads = sum(Reads),.groups = "drop") %>%
+  pivot_wider(names_from = BestTaxon, values_from = Reads) %>%
+    mutate(tube_no=as.numeric(tube_no)) %>%
+    arrange(tube_no) %>%
+  column_to_rownames("tube_no")
+
 ##MV1 Annotation curation
 MV1_05 <- MV1_04 %>%
-  mutate(.row_id = row_number()) %>%
-  pivot_longer(-.row_id, names_to = "BestTaxon", values_to = "Reads") %>%
+  rownames_to_column('tube_no') %>%
+  pivot_longer(cols=-tube_no, names_to = "BestTaxon", values_to = "Reads") %>%
   # missannotated pseudogene
   mutate(BestTaxon = if_else(BestTaxon == "Phocoenoides", "Phocoena phocoena", BestTaxon)) %>%
   # Great blue heron, not the European grey
@@ -417,48 +469,55 @@ MV1_05 <- MV1_04 %>%
   mutate(BestTaxon = if_else(BestTaxon == "Progne chalybea", "Progne subis", BestTaxon)) %>%
   # Call back to genus due to conflicting annotations
   mutate(BestTaxon = if_else(BestTaxon == "Sebastes mentella", "Sebastes", BestTaxon)) %>%
-  group_by(.row_id, BestTaxon) %>%
-  summarise(Reads = sum(Reads), .groups = "drop") %>%
-  pivot_wider(id_cols = .row_id, names_from = BestTaxon, values_from = Reads, values_fill = 0) %>%
-  arrange(.row_id) %>%
-  select(-.row_id)
+  group_by(tube_no, BestTaxon) %>%
+  summarise(Reads = sum(Reads),.groups = "drop") %>%
+  pivot_wider(names_from = BestTaxon, values_from = Reads) %>%
+    mutate(tube_no=as.numeric(tube_no)) %>%
+    arrange(tube_no) %>%
+  column_to_rownames("tube_no")
 
 
 ##MFU Annotation curation
 MFU_05 <- MFU_04 %>%
-  mutate(.row_id = row_number()) %>%
-  pivot_longer(-.row_id, names_to = "BestTaxon", values_to = "Reads") %>%
+  rownames_to_column('tube_no') %>%
+  pivot_longer(cols=-tube_no, names_to = "BestTaxon", values_to = "Reads") %>%
   #Annotation correction for geography
   mutate(BestTaxon = if_else(BestTaxon == "Cryptacanthodes maculatus", "Cryptacanthodes giganteus", BestTaxon)) %>%
     # Call back to genus due to conflicting annotations
   mutate(BestTaxon = if_else(BestTaxon == "Sebastes mentella", "Sebastes", BestTaxon)) %>%
    #Annotation correction for geography
   mutate(BestTaxon = if_else(BestTaxon == "Cryptacanthodes maculatus", "Cryptacanthodes giganteus", BestTaxon)) %>%
-  group_by(.row_id, BestTaxon) %>%
-  summarise(Reads = sum(Reads), .groups = "drop") %>%
-  pivot_wider(id_cols = .row_id, names_from = BestTaxon, values_from = Reads, values_fill = 0) %>%
-  arrange(.row_id) %>%
-  select(-.row_id)
+  group_by(tube_no, BestTaxon) %>%
+  summarise(Reads = sum(Reads),.groups = "drop") %>%
+  pivot_wider(names_from = BestTaxon, values_from = Reads) %>%
+    mutate(tube_no=as.numeric(tube_no)) %>%
+    arrange(tube_no) %>%
+  column_to_rownames("tube_no")
 
 #check
 # str(MV1_05)
 # str(MFU_05)
+
+#check ordering AGAIN
+rownames(COI_05) == COI_p$Tube
+rownames(MV1_05) == MV1_p$Tube
+rownames(MFU_05) == MFU_p$Tube
 ```
 
 ```{r Transformations}
 
 ##COI
     #make pres/absence dataset
-    COI_bin = COI_04
+    COI_bin = COI_05
       COI_bin[COI_bin>0]<-1  
     
     #make eDNA index dataset
-    COI_idx = COI_04 %>%
+    COI_idx = COI_05 %>%
       t() %>% 
       eDNA_index()
     
     #make proportion dataset  
-    COI_prop <- COI_04 %>% 
+    COI_prop <- COI_05 %>% 
       rownames_to_column("Tube") %>% 
       pivot_longer(-Tube) %>% 
       group_by(Tube) %>% 
@@ -467,7 +526,7 @@ MFU_05 <- MFU_04 %>%
       column_to_rownames("Tube")
     
     #make common proportion dataset  
-    COI_common_prop <- COI_04 %>% 
+    COI_common_prop <- COI_05 %>% 
       dplyr::select(which(colSums(.) > 5000)) %>%  # threshold for plotting
       rownames_to_column("Tube") %>% 
       pivot_longer(-Tube) %>% 
