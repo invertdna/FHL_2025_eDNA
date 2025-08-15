@@ -14,7 +14,7 @@ library(tidyverse)
 library(here)
 library(vegan)
 library(readxl)
-#library(microViz)
+library(microViz) #for the NMDS hull creation
 library(lubridate)
 #library(pairwiseAdonis)               
 
@@ -544,21 +544,26 @@ str(MFU_05)
 ### COI 
 
   ## pres/absence
-  dist_coi <- COI_bin %>% 
-    vegdist(method = "jaccard", binary = T)
+  dist_coi <- COI_idx %>% 
+    t() %>% 
+    vegdist(method = "bray", binary = T)
   
   MDS_coi <- dist_coi %>% 
+    as.matrix() %>% 
     metaMDS(trymax = 1000)
   
   COI_p %>%
     bind_cols(MDS_coi$points) %>%
-    ggplot(aes(x = MDS1, y = MDS2, color = Day.Night, shape = Treatment)) +
+    ggplot(aes(x = MDS1, y = MDS2, color = as.factor(time_idx))) +
     geom_point() +
-    stat_chull(aes(fill = Day.Night), alpha = 0.3) +
+    stat_chull(aes(fill = interaction(Day.Night, Treatment)), alpha = 0.3) +
+    geom_label(aes(x = MDS1, y = MDS2, label = time_idx)) +
     theme_minimal()
   
   # permanova
-  res <- adonis2(as.matrix(dist_coi) ~ interaction(COI_p$Day.Night,COI_p$Treatment)) 
+  res <- adonis2(as.matrix(dist_coi) ~ Day.Night + time_idx + time_idx%in%Treatment, 
+                 by = "terms",
+                 data = COI_p) 
   res
   
   # posthoc
@@ -605,6 +610,12 @@ str(MFU_05)
   PERMDISP <- permutest(disp_coi_idx, pairwise = T ,permutations = how(nperm=999))
   PERMDISP
 ```
+
+```{r}
+
+```
+
+
 
 ## Abstract
 
