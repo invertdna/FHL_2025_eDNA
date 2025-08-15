@@ -611,8 +611,44 @@ str(MFU_05)
   PERMDISP
 ```
 
-```{r}
+```{r StackedBars}
 
+#TODO straighten plotting details for shading and labeling, etc
+
+#COI
+COI_common_prop %>% 
+  rownames_to_column("Tube") %>% 
+  pivot_longer(-Tube) %>% 
+  left_join(COI_p %>% dplyr::select(Tube, datetime) %>% mutate(Tube = as.character(Tube))) %>% 
+  ggplot(aes(x = Tube, y = value, fill = name)) +
+  # Add alternating day/night shading rectangles first
+  geom_rect(data = data.frame(
+    xmin = seq(0.5, by = 12, length.out = ceiling(max(as.numeric(COI_p$Tube))/12)),
+    xmax = seq(6.5, by = 12, length.out = ceiling(max(as.numeric(COI_p$Tube))/12)),
+    ymin = -Inf, ymax = -0.05
+  ), aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+  fill = "lightblue", alpha = 0.3, inherit.aes = FALSE) +
+  
+  geom_rect(data = data.frame(
+    xmin = seq(6.5, by = 12, length.out = ceiling(max(as.numeric(COI_p$Tube))/12)),
+    xmax = seq(12.5, by = 12, length.out = ceiling(max(as.numeric(COI_p$Tube))/12)),
+    ymin = -Inf, ymax = -0.05
+  ), aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+  fill = "darkblue", alpha = 0.3, inherit.aes = FALSE) +
+  
+  geom_col() + xlab("") + ylab("Proportion") +
+  scale_x_discrete(labels = unique(COI_p$Date), 
+                   breaks = c(1:max(COI_p$Tube))[match(unique(COI_p$Date), COI_p$Date)]) +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    legend.position = "top",
+    legend.text = element_text(size = 6),
+    legend.title = element_blank()
+  ) +
+  # Expand the plot area to show the shading below
+  coord_cartesian(ylim = c(-0.1, max(COI_common_prop, na.rm = TRUE) * 1.05), 
+                  expand = FALSE)
+ 
 ```
 
 
