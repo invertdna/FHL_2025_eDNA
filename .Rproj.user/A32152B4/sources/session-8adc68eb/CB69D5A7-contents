@@ -336,7 +336,7 @@ MFU_03 <- MFU_02 %>%
   mutate(Tube = as.numeric(Tube)) %>% 
   column_to_rownames("Tube")
 
-
+#hh
 #filter metadata to just samples we kept after QC
 COI_p <- COI_m %>% 
   filter(Tube %in% rownames(COI_03))
