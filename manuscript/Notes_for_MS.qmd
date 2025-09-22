@@ -13,9 +13,27 @@ editor: visual
 ## Introduction
 
 ## Methods
+### Study area and sample collection
+The study was conducted at Friday Harbor Laboratories (FHL), located on San Juan Island, Washington, USA, with particular focus on the waters adjacent to the FHL dock. Environmental DNA (eDNA) sampling was carried out from July 27 to August 3, 2025, twice daily—midday (11:00–13:00) and at night (22:00–00:00). Each sampling event included two treatments: light and no light. For the light treatment, an underwater light source was switched on 30 minutes prior to sample collection. For each treatment, approximately 3 L of surface seawater were collected in sterile 3 L Nalgene Cantene carboys and filtered in triplicate on site through 5.0 μm Sterlitech MCE filters (Sterlitech, Kent, WA, USA) using a Smith-Root Citizen Science vacuum pump (Smith‐Root, Vancouver, WA, USA). Filter membranes were placed in 1.5 mL DNA/RNA Shield (Zymo Research, USA), transported at room temperature, and stored in the fridge. Negative controls (3 L of tap water) were processed during each sampling event to monitor potential contamination. All sampling equipment was cleaned with 10% bleach and rinsed with tap water between uses.
+
+### Laboratory processing and sequencing
+DNA extraction, library preparation, and sequencing were performed according to the protocol outlined in Ip et al. (2025). Briefly, filters were thawed at room temperature, vortexed, and 300 μL of the DNA/RNA Shield preservative was used directly for DNA extraction with the QIAgen DNeasy Blood & Tissue Kit, following the manufacturer's protocol. Extracted DNA was quantified using Qubit High-Sensitivity assays and stored at −20 °C until amplification. Three primer sets were used to target distinct genetic regions: two primer sets for fish (MiFish-U (Miya et al., 2025) and MarVer1 (Valsecchi et al., 2020)) targeting the 12S region, and one primer set targeting the COI region of eukaryotes (xxx). PCR reactions were carried out in duplicate per sample, pooled, and purified with AMPure XP beads. Sequencing libraries were prepared using the Oxford Nanopore SQK-LSK114 ligation kit and loaded onto R10.4.1 MinION flow cells for 48-72 hour runs on a MK1B device using MinKNOW v22.12.5.
+
+### Bioinformatics analysis
+Nanopore sequence data were processed following the pipeline of Ip et al. (2025). Raw POD5 files were basecalled with Dorado v0.9.1 in Super-Accurate (SUP) mode. FASTQ reads were demultiplexed, and primers and UMIs were trimmed using ONTBarcoder2.3, allowing up to two mismatches per UMI and splitting self-ligated concatemers. Within-sample dereplication and clustering were performed with VSEARCH at 98% identity to generate representative OTU centroids. An initial OTU table of read counts was curated using LULU to remove artifactual OTUs based on sequence similarity and co-occurrence. Filtered OTU centroids were assigned taxonomy via BLASTn against the NCBI eukaryote database (≥96% identity, e-value ≤1e-40), and the lowest common ancestor (LCA) was determined with TaxonKit. Manual curation ensured ecological plausibility, collapsing ambiguous OTUs to genus level when necessary and removing singletons or residual sequencing errors. The final dataset comprised 47 vertebrate taxa for MiFish, 80 vertebrate taxa for MerVar, and 268 eukaryotic taxa for COI across xxx eDNA samples.
+
+### Statistical analyses
+### Taxa relative abundance
+### eDNA index
+### Community composition
+### Indicator species and species-specific responses to light regimes
+
 
 ## Results
 
 ## Conclusion
 
-### References
+## References
+Ip, A., Brandão-Dias, P. F. P., Guri, G., Andruszkiewicz, E. A., & Kelly, R. P. (2025). Vertebrate Biodiversity via eDNA at the air-water interface. bioRxiv 2025.06.13.659655; doi: https://doi.org/10.1101/2025.06.13.659655 
+Miya, M., Sato, Y., Fukunaga, T., Sado, T., Poulsen, J. Y., Sato, K., Minamoto, T., Yamamoto, S., Yamanaka, H., Araki, H., Kondoh, M., & Iwasaki, W. (2015). MiFish, a set of universal PCR primers for metabarcoding environmental DNA from fishes: Detection of more than 230 subtropical marine species. Royal Society Open Science, 2, 150088. http://doi.org/10.1098/rsos.150088
+Valsecchi E, Bylemans J, Goodman SJ, et al. Novel universal primers for metabarcoding environmental DNA surveys of marine mammals and other marine vertebrates. Environmental DNA. 2020; 2: 460–476. https://doi.org/10.1002/edn3.72
