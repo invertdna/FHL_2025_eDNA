@@ -1,0 +1,81 @@
+OriginalName,CleanedName,Family,Class,Phylum,Kingdom,LookupStatus,TrophicLevel
+Agonopsis vulsa,Agonopsis vulsa,Agonidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Alopochen aegyptiaca,Alopochen aegyptiaca,Anatidae,Aves,Chordata,Animalia,exact_match,Unknown
+Ammodytes personatus,Ammodytes personatus,Ammodytidae,Teleostei,Chordata,Animalia,exact_match,Forage species
+Anarrhichthys ocellatus,Anarrhichthys ocellatus,Anarhichadidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Anoplagonus inermis,Anoplagonus inermis,Agonidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Anoplarchus,Anoplarchus,Stichaeidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Apodichthys flavidus,Apodichthys flavidus,Pholidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Ardea herodias,Ardea herodias,Ardeidae,Aves,Chordata,Animalia,exact_match,Unknown
+Artedius fenestralis,Artedius fenestralis,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Artedius harringtoni,Artedius harringtoni,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Artedius lateralis,Artedius lateralis,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Ascelichthys rhodorus,Ascelichthys rhodorus,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Aulorhynchus flavidus,Aulorhynchus flavidus,Aulorhynchidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Beringraja binoculata,Beringraja binoculata,Rajidae,Elasmobranchii,Chordata,Animalia,exact_match,Unknown
+Blepsias cirrhosus,Blepsias cirrhosus,Hemitripteridae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Branta canadensis,Branta canadensis,NA,NA,NA,NA,error: (204) No Content - Branta c...,NA
+Cepphus columba,Cepphus columba,Alcidae,Aves,Chordata,Animalia,exact_match,Unknown
+Citharichthys sordidus,Citharichthys sordidus,Paralichthyidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Citharichthys stigmaeus,Citharichthys stigmaeus,Paralichthyidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Clupea pallasii,Clupea pallasii,Clupeidae,Teleostei,Chordata,Animalia,exact_match,Forage species
+Cottidae,Cottidae,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Cryptacanthodes aleutensis,Cryptacanthodes aleutensis,Cryptacanthodidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Cryptacanthodes giganteus,Cryptacanthodes giganteus,Cryptacanthodidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Enophrys bison,Enophrys bison,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Eschrichtius robustus,Eschrichtius robustus,Eschrichtiidae,Mammalia,Chordata,Animalia,exact_match,Apex predators
+Eumetopias jubatus,Eumetopias jubatus,Otariidae,Mammalia,Chordata,Animalia,exact_match,Apex predators
+Gadus,Gadus,Gadidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Gadus chalcogrammus,Gadus chalcogrammus,Gadidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Gallus,Gallus,Phasianidae,Aves,Chordata,Animalia,exact_match,Mesopredators
+Gasterosteus aculeatus,Gasterosteus aculeatus,Gasterosteidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Gobiesox maeandricus,Gobiesox maeandricus,Gobiesocidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Hemilepidotus hemilepidotus,Hemilepidotus hemilepidotus,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Hexagrammos,Hexagrammos,Hexagrammidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Hexagrammos decagrammus,Hexagrammos decagrammus,Hexagrammidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Hirundo rustica,Hirundo rustica,NA,NA,NA,NA,error: (204) No Content - Hirundo ...,NA
+Hydrolagus colliei,Hydrolagus colliei,Chimaeridae,Holocephali,Chordata,Animalia,exact_match,Unknown
+Hypomesus,Hypomesus,Osmeridae,Teleostei,Chordata,Animalia,exact_match,Forage species
+Icelinus borealis,Icelinus borealis,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Larus,Larus,Laridae,Aves,Chordata,Animalia,exact_match,Unknown
+Larus occidentalis,Larus occidentalis,Laridae,Aves,Chordata,Animalia,exact_match,Unknown
+Lepidopsetta,Lepidopsetta,Pleuronectidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Leptocottus armatus,Leptocottus armatus,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Liparis,Liparis,Liparidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Liparis florae,Liparis florae,Liparidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Liparis fucensis,Liparis fucensis,Liparidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Lontra canadensis,Lontra canadensis,Mustelidae,Mammalia,Chordata,Animalia,exact_match,Apex predators
+Lumpenus sagitta,Lumpenus sagitta,Lumpenidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Lycodopsis pacificus,Lycodopsis pacificus,Zoarcidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Microgadus proximus,Microgadus proximus,Gadidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Myoxocephalus,Myoxocephalus,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Nautichthys oculofasciatus,Nautichthys oculofasciatus,Hemitripteridae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Odontopyxis trispinosa,Odontopyxis trispinosa,Agonidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Oligocottus,Oligocottus,Cottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Oncorhynchus,Oncorhynchus,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Oncorhynchus gorbuscha,Oncorhynchus gorbuscha,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Oncorhynchus keta,Oncorhynchus keta,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Oncorhynchus kisutch,Oncorhynchus kisutch,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Oncorhynchus nerka,Oncorhynchus nerka,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Oncorhynchus tshawytscha,Oncorhynchus tshawytscha,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Ophiodon elongatus,Ophiodon elongatus,Hexagrammidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Phoca vitulina,Phoca vitulina,Phocidae,Mammalia,Chordata,Animalia,exact_match,Apex predators
+Phocoena phocoena,Phocoena phocoena,Phocoenidae,Mammalia,Chordata,Animalia,exact_match,Apex predators
+Pholis laeta,Pholis laeta,Pholidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Pholis ornata,Pholis ornata,Pholidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Phytichthys chirus,Phytichthys chirus,Stichaeidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Pleuronectidae,Pleuronectidae,Pleuronectidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Pleuronichthys coenosus,Pleuronichthys coenosus,Pleuronectidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Polypera greeni,Polypera greeni,Liparidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Progne subis,Progne subis,NA,NA,NA,NA,error: (204) No Content - Progne s...,NA
+Psychrolutes paradoxus,Psychrolutes paradoxus,Psychrolutidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Psychrolutidae,Psychrolutidae,Psychrolutidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Rhamphocottus richardsonii,Rhamphocottus richardsonii,Rhamphocottidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Salmo salar,Salmo salar,Salmonidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Scorpaenichthys marmoratus,Scorpaenichthys marmoratus,Jordaniidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Sebastes,Sebastes,Sebastidae,Teleostei,Chordata,Animalia,exact_match,Apex predators
+Squalus,Squalus,Squalidae,Elasmobranchii,Chordata,Animalia,exact_match,Unknown
+Stichaeidae,Stichaeidae,Stichaeidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Tarletonbeania crenularis,Tarletonbeania crenularis,Myctophidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Trichodon trichodon,Trichodon trichodon,Trichodontidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
+Xiphister,Xiphister,Stichaeidae,Teleostei,Chordata,Animalia,exact_match,Mesopredators
