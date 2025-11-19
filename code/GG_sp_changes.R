@@ -258,48 +258,62 @@ p0 <-
 	labs(y = 'eDNA index change')+
 	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Trophic Level response.jpg'),p0)
 
 p1 <- ch_data %>%
 	filter(TrophicLevel=='Planktivores') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Planktivores')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Planktivores.jpg'),p1)
 
 p2 <- ch_data %>%
 	filter(TrophicLevel=='Gelatinous zooplankton') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Gelatinous zooplankton')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Gelatinous zooplankto.jpg'),p2)
+
 
 p3 <- ch_data %>%
 	filter(TrophicLevel=='Filter feeders') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Filter feeders')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Filter feeders.jpg'),p3)
 
 p4 <- ch_data %>%
 	filter(TrophicLevel=='Benthic invertebrates') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Benthic invertebrates')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Benthic invertebrates.jpg'),p4)
 
 p5 <- ch_data %>%
 	filter(TrophicLevel=='Primary producers') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Primary producers')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Primary producers.jpg'),p5)
 
 p6 <- ch_data %>%
 	filter(TrophicLevel=='Forage species') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Forage species')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Forage species.jpg'),p6)
 
 p7 <- ch_data %>%
 	filter(TrophicLevel=='Parasites') %>% 
@@ -308,14 +322,15 @@ p7 <- ch_data %>%
 	geom_abline(intercept=0,slope=0,lty=2)+
 	ggtitle('Parasites')+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
+ggsave(here('plots','sp_changes','Parasites.jpg'),p7)
 
 p8 <- ch_data %>%
 	filter(TrophicLevel=='Pathogens') %>% 
 	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
 	labs(y = 'eDNA index change')+
 	ggtitle('Pathogens')+
+	geom_abline(intercept=0,slope=0,lty=2)+
 	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-
-
+ggsave(here('plots','sp_changes','Pathogens.jpg'),p8)
 
 
