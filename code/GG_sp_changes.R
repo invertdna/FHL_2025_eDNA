@@ -7,6 +7,7 @@ library(here)
 library(tibble)
 library(tidyr)
 library(ggpubr)
+# library(MoMAColors)
 
 # Functions -----------------------------------------------------------------------------------
 make_index <- function(data, index_variable, index_name) {
@@ -180,79 +181,41 @@ design_mat_list <- list(design_mat_coi_eDNAidx,
 # Analysis ------------------------------------------------------------------------------------
 
 TrophicLevel_COI <- read.csv(here('Output','COI_TAX.csv'))
+TrophicLevel_MV1 <- read.csv(here('Output','MV1_TAX.csv'))
 valid_species_COI <- TrophicLevel_COI %>% filter(!is.na(TrophicLevel)) %>% pull(OriginalName) 
-comm <- coi_eDNAidx %>% filter(rownames(.)%in%valid_species_COI) %>% #select marine species
+valid_species_MV1 <- TrophicLevel_MV1 %>% filter(!is.na(TrophicLevel)) %>% pull(OriginalName) 
+comm_coi <- coi_eDNAidx %>% filter(rownames(.)%in%valid_species_COI) %>% #select marine species
+	mutate(total_occurrences=rowSums(. > 0)) %>% #Filter only species that have more than 10 occurrences
+	filter(total_occurrences>10) %>% select(-total_occurrences)
+comm_mv1 <- mv1_eDNAidx %>% filter(rownames(.)%in%valid_species_MV1) %>% #select marine species
 	mutate(total_occurrences=rowSums(. > 0)) %>% #Filter only species that have more than 10 occurrences
 	filter(total_occurrences>10) %>% select(-total_occurrences)
 
 # Compute the species-specific pairwise difference
-pair_sp_diff <- pairwise_row_diff(t(comm))
+pair_sp_diff_coi <- pairwise_row_diff(t(comm_coi))
+pair_sp_diff_mv1 <- pairwise_row_diff(t(comm_mv1))
 
 # Transform the table in a long format and join the trophic level
-pair_sp_diff_long <- bind_cols(pair_sp_diff) %>% 
-	cbind(TrophicLevel_COI %>% filter(OriginalName%in%rownames(comm)) %>% select(CleanedName,TrophicLevel)) %>% 
+pair_sp_diff_long_coi <- bind_cols(pair_sp_diff_coi) %>% 
+	cbind(TrophicLevel_COI %>% filter(OriginalName%in%rownames(comm_coi)) %>% select(CleanedName,TrophicLevel)) %>% 
 	rename(Species='CleanedName') %>% 
 	pivot_longer(cols = -c('Species','TrophicLevel')) %>% 
 	separate(name, into = c("Tube_1", "Tube_2"), sep = "_vs_") %>% 
 	mutate(Tube_1=as.numeric(Tube_1)) %>% 
 	mutate(Tube_2=as.numeric(Tube_2)) 
 
-# Old plot
-# pair_sp_diff_long_meta <- pair_sp_diff_long %>% 
-# 	left_join(.,design_mat_coi_eDNAidx,by=c('Tube_1','Tube_2')) %>% 
-# 	filter(!is.na(D)) %>% 
-# 	mutate(ToD=paste0(time_1,'_',time_2)) %>% 
-# 	rename(Day_v_night='time_cat') %>% 
-# 	rename(Date_difference='delta_date') %>% 
-# 	rename(Light_v_Nolight='tre_cat') %>% 
-# 	rename(Biological_replciate='rep_cat') 
-# 
-# pair_sp_diff_long_meta %>% 
-# 	group_by(ToD,Light_v_Nolight,light_day,light_night,Biological_replciate,Species,TrophicLevel) %>% 
-# 	summarize(eDNA_idx_change=mean(value)) %>% 
-# 	ungroup() %>% 
-# 	filter(Biological_replciate==0) %>% select(-Biological_replciate) %>% 
-# 	filter(eDNA_idx_change< -0.05|eDNA_idx_change> 0.05) %>%
-# 	arrange(TrophicLevel) %>% as.data.frame()
-# 
-# sp_sig <- pair_sp_diff_long_meta %>% 
-# 	# filter(TrophicLevel=='Planktivores') %>%
-# 	mutate(Treatment=if_else(Day_v_night==1,paste0(time_1,'_',time_2),NA)) %>% 
-# 	mutate(Treatment=if_else(Light_v_Nolight==1,paste0(time_1,'-',tre_1,'_',tre_2),Treatment)) %>% 
-# 	mutate(value=if_else(Treatment=='night-NoLight_Light',value*-1,value)) %>% 
-# 	mutate(Treatment=if_else(Treatment=='night-Light_NoLight','night-NoLight_Light',Treatment)) %>% 
-# 	mutate(value=if_else(Treatment=='day-NoLight_Light',value*-1,value)) %>% 
-# 	mutate(Treatment=if_else(Treatment=='day-Light_NoLight','day-NoLight_Light',Treatment)) %>% 
-# 	group_by(Treatment,Species) %>% 
-# 	summarize(eDNA_idx_change=mean(value)) %>% 
-# 	filter(eDNA_idx_change< -0.1|eDNA_idx_change> 0.1) %>% as.data.frame() %>% 
-# 	pull(Species) %>% unique()
-# 
-# ch_data <- pair_sp_diff_long_meta %>%
-# 	# filter(TrophicLevel=='Planktivores') %>%
-# 	filter(Species%in%sp_sig) %>%
-# 	mutate(Treatment=if_else(Day_v_night==1,paste0(time_1,'-',time_2),NA)) %>% 
-# 	mutate(Treatment=if_else(Light_v_Nolight==1,paste0(tre_1,'-',tre_2,'(',time_1,')'),Treatment)) %>% 
-# 	mutate(value=if_else(Treatment=='NoLight-Light(night)',value*-1,value)) %>% 
-# 	mutate(Treatment=if_else(Treatment=='NoLight-Light(night)','Light-NoLight(night)',Treatment)) %>% 
-# 	mutate(value=if_else(Treatment=='NoLight-Light(day)',value*-1,value)) %>% 
-# 	mutate(Treatment=if_else(Treatment=='NoLight-Light(day)','Light-NoLight(day)',Treatment)) %>% 
-# 	mutate(Treatment=if_else(Treatment=='night-day','Night-Day',Treatment)) %>% 
-# 	mutate(Treatment=if_else(Treatment=='day-night','Day-Night',Treatment)) %>% 
-# 	filter(!is.na(Treatment)) %>%
-# 	mutate(Treatment = factor(Treatment,
-# 														levels = c(
-# 															'Light-NoLight(night)',
-# 															'Night-Day',
-# 															'Day-Night',
-# 															'Light-NoLight(day)'
-# 														))) %>% 
-# 	filter(Date_difference<2)
+pair_sp_diff_long_mv1 <- bind_cols(pair_sp_diff_mv1) %>% 
+	cbind(TrophicLevel_MV1 %>% filter(OriginalName%in%rownames(comm_mv1)) %>% select(CleanedName,TrophicLevel)) %>% 
+	rename(Species='CleanedName') %>% 
+	pivot_longer(cols = -c('Species','TrophicLevel')) %>% 
+	separate(name, into = c("Tube_1", "Tube_2"), sep = "_vs_") %>% 
+	mutate(Tube_1=as.numeric(Tube_1)) %>% 
+	mutate(Tube_2=as.numeric(Tube_2)) 
 
 
 # New plot
-ch_data <-
-	pair_sp_diff_long %>% 
+ch_data_coi <-
+	pair_sp_diff_long_coi %>% 
 	left_join(.,design_mat_coi_eDNAidx,by=c('Tube_1','Tube_2')) %>% 
 	filter(!is.na(D)) %>% 
 	rename(tod_1='time_1',tod_2='time_2') %>% 
@@ -279,102 +242,335 @@ ch_data <-
 	rename(Biological_replciate='rep_cat') %>% 
 	select(-Treatment) %>% rename(Treatment='treatment')
 
-sp_sig <- ch_data %>% 
+ch_data_mv1 <-
+	pair_sp_diff_long_mv1 %>% 
+	left_join(.,design_mat_mv1_eDNAidx,by=c('Tube_1','Tube_2')) %>% 
+	filter(!is.na(D)) %>% 
+	rename(tod_1='time_1',tod_2='time_2') %>% 
+	rename(l_1='tre_1',l_2='tre_2') %>% 
+	mutate(Treatment=paste0(tod_1,'-',tod_2)) %>% 
+	mutate(treatment=if_else(tod_1!=tod_2,paste0(tod_1,'-',tod_2),NA)) %>% 
+	mutate(treatment=if_else(tod_1==tod_2&l_1!=l_2,paste0(l_1,'-',l_2,'(',tod_1,')'),treatment)) %>% 
+	filter(delta_date<2) %>% 
+	mutate(value=if_else(treatment=='night-day',value*-1,value)) %>% 
+	mutate(treatment=if_else(treatment=='night-day','day-night',treatment)) %>% 
+	mutate(value=if_else(treatment=='NoLight-Light(day)',value*-1,value)) %>% 
+	mutate(treatment=if_else(treatment=='NoLight-Light(day)','Light-NoLight(day)',treatment)) %>% 
+	mutate(value=if_else(treatment=='NoLight-Light(night)',value*-1,value)) %>% 
+	mutate(treatment=if_else(treatment=='NoLight-Light(night)','Light-NoLight(night)',treatment)) %>% 
+	filter(!is.na(treatment)) %>% 
+	filter(!(tod_1!=tod_2&l_1!=l_2)) %>% 
+	filter(!(delta_date==1&tod_1==tod_2)) %>% 
+	mutate(treatment=if_else(treatment=='Light-NoLight(night)','Light-No_Light(night)',treatment),
+				 treatment=if_else(treatment=='Light-NoLight(day)','Light-No_Light(day)',treatment),
+				 treatment=if_else(treatment=='day-night','Day-Night',treatment)) %>% 
+	rename(Day_v_night='time_cat') %>% 
+	rename(Date_difference='delta_date') %>% 
+	rename(Light_v_Nolight='tre_cat') %>% 
+	rename(Biological_replciate='rep_cat') %>% 
+	select(-Treatment) %>% rename(Treatment='treatment')
+
+sp_sig_coi <- ch_data_coi %>% 
 	group_by(Species,Treatment) %>% 
 	summarise(eDNA_idx_change=mean(value)) %>% 
-	filter(eDNA_idx_change< -0.1|eDNA_idx_change> 0.1) %>% 
+	filter(eDNA_idx_change< -0.1|eDNA_idx_change> 0.12) %>% 
 	ungroup() %>% distinct(Species) %>% 
 	pull(Species)
 
+sp_sig_mv1 <- ch_data_mv1 %>% 
+	group_by(Species,Treatment) %>% 
+	summarise(eDNA_idx_change=mean(value)) %>% 
+	filter(eDNA_idx_change< -0.1|eDNA_idx_change> 0.12) %>% 
+	ungroup() %>% distinct(Species) %>% 
+	pull(Species)
 
-p0 <-
-	ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='TrophicLevel')+
-	labs(y = 'eDNA index change')+
+# 
+# response_group <- ch_data %>% 
+# 	group_by(Species,Treatment) %>% 
+# 	summarise(eDNA_idx_change=mean(value)) %>% 
+# 	filter(eDNA_idx_change< -0.1|eDNA_idx_change> 0.12)
+# 
+# # sp_sig <- response_group %>% ungroup() %>% distinct(Species) %>% 
+# # 	pull(Species)
+# 
+# 
+# resp_sp <- response_group %>%
+# 	mutate(response_g=if_else(Treatment=='Day-Night'&eDNA_idx_change>0.1,'1',NA)) %>% 
+# 	mutate(response_g=if_else(Treatment=='Day-Night'&eDNA_idx_change< -0.1,'2',response_g)) %>% 
+# 	mutate(response_g=if_else(Treatment=='Light-No_Light(night)'&eDNA_idx_change> 0.1,'3',response_g)) %>% 
+# 	mutate(response_g=if_else(Treatment=='Light-No_Light(night)'&eDNA_idx_change< -0.1,'4',response_g)) %>% 
+# 	mutate(response_g=if_else(Treatment=='Light-No_Light(day)'&eDNA_idx_change> 0.1,'5',response_g)) %>% 
+# 	mutate(response_g=if_else(Treatment=='Light-No_Light(day)'&eDNA_idx_change< -0.1,'6',response_g)) %>% 
+# 	group_by(Species) %>% 
+# 	summarise(all_responses = paste(response_g, collapse = ", ")) %>% 
+# 	ungroup() %>% 
+# 	mutate(Response=if_else(all_responses=='1','Day-thriving',NA)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 3','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 6, 4','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 6, 3','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 5, 4','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 5, 3','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 5','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 4','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='1, 6','Day-thriving & light-sensitive',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='4','Light-shy',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='6','Light-shy',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='2','Night-thriving',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='2, 3','Night-thriving',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='2, 4','Night-thriving',Response)) %>% 
+# 	mutate(Response=if_else(all_responses=='2, 6, 4','Night-thriving',Response)) 
+# 
+# 
+# plot_data <- ch_data %>% left_join(.,resp_sp,by='Species') %>% 
+# 	ungroup() %>% 
+# 	filter(!is.na(TrophicLevel)) %>% 
+# 	filter(Species%in%sp_sig) %>%
+# 	filter(!is.na(Response)) %>%
+# 	group_by(Species,TrophicLevel,Response,Treatment) %>% 
+# 	summarise(mean_eDNA_ch=mean(value)) %>% 
+# 	mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+# 	ungroup() %>% 
+# 	mutate(TrophicLevel=if_else(!(TrophicLevel%in%trophic_order),'Other',TrophicLevel))
+# 
+# 
+# trophic_order <- c("Benthic invertebrates", 
+# 									 "Gelatinous zooplankton",
+# 									 # "Forage species",
+# 									 "Planktivores",
+# 									 "Filter feeders",
+# 									 "Primary producers",
+# 									 'Other')
+# 
+# tl_sp <- plot_data %>% 
+# 	mutate(TrophicLevel=if_else(!(TrophicLevel%in%trophic_order),'Other',TrophicLevel)) %>% 
+# 	distinct(Species,TrophicLevel) %>%
+# 	mutate(TrophicLevel = factor(TrophicLevel, levels = trophic_order))
+# 
+# # Create the species order grouped by trophic level
+# species_order <- tl_sp %>%
+# 	arrange(TrophicLevel, Species) %>%
+# 	pull(Species)
+# 
+# tl_sp %>%
+# 	arrange(TrophicLevel, Species) %>% 
+# 	count(TrophicLevel)
+# 
+# tl_summ <- tl_sp %>%
+# 	arrange(TrophicLevel, Species) %>% 
+# 	mutate(row_num = row_number()) %>%
+# 	group_by(TrophicLevel) %>%
+# 	summarise(
+# 		st_row = min(row_num),
+# 		end_row = max(row_num),
+# 		n_species = n()
+# 	) 
+# 
+# 
+# #Benthic
+# benthic_color <- sample(moma.colors('Lupi',n=300)[61:110],tl_summ$n_species[tl_summ$TrophicLevel=='Benthic invertebrates'])
+# 	# c("#AF4B66","#BA6177", "#BD687C", "#C06F82", "#C47688","#CE8C98")
+# 
+# #Gelatinous zooplankton 3
+# gel_color <- sample(moma.colors('Lupi',n=300)[271:300],tl_summ$n_species[tl_summ$TrophicLevel=='Gelatinous zooplankton'])
+# 	# c("#E37447", "#DD6745", "#D85A44")
+# 
+# #Forage species 2
+# oth_color <- sample(moma.colors('Lupi',n=300)[250:260],tl_sp %>% count(TrophicLevel) %>% filter(TrophicLevel=='Other') %>% pull(n))
+# 	# c("#E3B15B", "#FEB550")
+# 
+# #Planktivores 2
+# plank_color <- sample(moma.colors('Lupi',n=300)[205:222],tl_sp %>% count(TrophicLevel) %>% filter(TrophicLevel=='Planktivores') %>% pull(n))
+# 	# c("#3292A0", "#4F9794")
+# 
+# #Filter feeders 1
+# filt_color <- sample(moma.colors('Lupi',n=300)[1:45],tl_sp %>% count(TrophicLevel) %>% filter(TrophicLevel=='Filter feeders') %>% pull(n))
+# 	# c("#61BEA4")
+# 
+# #Primary producers 34
+# prim_color <- sample(moma.colors('Lupi',n=300)[c(135:201,226:245)],tl_sp %>% count(TrophicLevel) %>% filter(TrophicLevel=='Primary producers') %>% pull(n))
+# 	# c("#C0A588" ,"#B0A572" ,"#AEA56E" ,"#ACA56B" ,"#A9A568" ,"#A7A564" ,"#A5A561" ,"#A2A55E" ,"#A0A55B" ,"#9EA557" ,"#9BA554" ,"#99A551" ,"#96A44F" ,"#93A452" ,"#8FA355" ,"#8BA258" ,"#88A25B" ,"#84A15E" ,"#80A061" ,"#7CA064" ,"#799F67" ,"#759E6A" ,"#719E6D" ,"#6D9D6F" ,"#6A9C72" ,"#669C75" ,"#769E85" ,"#7D9F83" ,"#85A180" ,"#8CA27D" ,"#93A37A" ,"#9BA477" ,"#A2A674" ,"#A9A771" )
+# 
+# sp_color <- c('#AF4B66',benthic_color,
+# 							'#E37447',gel_color,
+# 							"#3292A0",plank_color,
+# 							"#61BEA4",filt_color,
+# 							"#9BA554",prim_color,
+# 							'#E3B15B',oth_color)
+# 
+# color_breaks <- c(trophic_order[1],species_order[tl_summ$st_row[tl_summ$TrophicLevel==trophic_order[1]]:tl_summ$end_row[tl_summ$TrophicLevel==trophic_order[1]]],
+# 									trophic_order[2],species_order[tl_summ$st_row[tl_summ$TrophicLevel==trophic_order[2]]:tl_summ$end_row[tl_summ$TrophicLevel==trophic_order[2]]],
+# 									trophic_order[3],species_order[tl_summ$st_row[tl_summ$TrophicLevel==trophic_order[3]]:tl_summ$end_row[tl_summ$TrophicLevel==trophic_order[3]]],
+# 									trophic_order[4],species_order[tl_summ$st_row[tl_summ$TrophicLevel==trophic_order[4]]:tl_summ$end_row[tl_summ$TrophicLevel==trophic_order[4]]],
+# 									trophic_order[5],species_order[tl_summ$st_row[tl_summ$TrophicLevel==trophic_order[5]]:tl_summ$end_row[tl_summ$TrophicLevel==trophic_order[5]]],
+# 									trophic_order[6],species_order[tl_summ$st_row[tl_summ$TrophicLevel==trophic_order[6]]:tl_summ$end_row[tl_summ$TrophicLevel==trophic_order[6]]])
+# 
+# plot_data %>% ungroup() %>% 
+# ggplot()+
+# 	geom_point(aes(x=Treatment,y=mean_eDNA_ch,colour = Species),alpha=0.5)+
+# 	geom_line(aes(x=Treatment,y=mean_eDNA_ch,colour = Species,group = Species), linewidth = 0.4, alpha = 0.6,lty=2)+
+# 	geom_point(data=plot_data %>% group_by(TrophicLevel,Response,Treatment) %>%
+# 						 	summarise(mean_eDNA_ch=mean(mean_eDNA_ch)),
+# 						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),size=4)+
+# 	geom_line(data=plot_data %>% group_by(TrophicLevel,Response,Treatment) %>%
+# 						 	summarise(mean_eDNA_ch=mean(mean_eDNA_ch)),
+# 						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel,group = TrophicLevel),size=1)+
+# 	scale_color_manual(values=sp_color, breaks = color_breaks)+
+# 	facet_grid(Response~TrophicLevel)+
+# 	ylab('eDNA index change')+
+# 	guides(color = guide_legend(ncol = 3))+
+# 	geom_abline(intercept=0,slope=0,lty=2)+
+# 	theme_bw()+
+# 	theme(
+# 		axis.text.x = element_text(angle = 50, hjust = 1)
+# 	)
+
+
+
+trophic_color_coi <- c('#AF4B66',#benthic_color,
+									 '#E3B15B',#for_color,
+									 '#E37447',#gel_color,
+									 "#3292A0",#plank_color,
+									 "#61BEA4",#filt_color,
+									 "#9BA554"#prim_color,
+									 )
+
+names(trophic_color_coi) <- c('Benthic invertebrates',
+													'Forage species',
+													'Gelatinous zooplankton',
+													'Planktivores',
+													'Filter feeders',
+													'Primary producers')
+
+plot_data_coi <- ch_data_coi %>% 
+	filter(!is.na(TrophicLevel)) %>% 
+	group_by(Species,TrophicLevel,Treatment) %>% 
+	summarise(mean_eDNA_ch=mean(value)) %>% 
+	mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+	ungroup() %>% 
+	filter(TrophicLevel%in%names(trophic_color_coi))
+
+trophic_color_mv1 <- c('#AF4B66',#Apex predators,
+									 '#E37447',#Forage species,
+									 "#3292A0"#Mesopredators
+									 )
+
+names(trophic_color_mv1) <- c('Apex predators',
+													'Forage species',
+													'Mesopredators')
+
+plot_data_2_mv1 <- ch_data_mv1 %>% 
+	filter(!is.na(TrophicLevel)) %>% 
+	group_by(Species,TrophicLevel,Treatment) %>% 
+	summarise(mean_eDNA_ch=mean(value)) %>% 
+	mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+	ungroup() %>% 
+	filter(TrophicLevel%in%names(trophic_color_mv1))
+
+p1 <- ggplot()+
+	geom_boxplot(data=plot_data_coi,
+						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),outlier.shape = NA,size=0.8,coef = 0)+
+	geom_point(data=plot_data_coi %>% filter(!(Species%in%sp_sig_coi)),aes(x=Treatment,y=mean_eDNA_ch),color='grey',alpha=0.5)+
+	geom_line(data=plot_data_coi %>% filter(!(Species%in%sp_sig_coi)),aes(x=Treatment,y=mean_eDNA_ch,group = Species),color='grey',alpha=0.6)+
+	geom_point(data=plot_data_coi %>% filter(Species%in%sp_sig_coi),
+						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),alpha=0.5)+
+	geom_line(data=plot_data_coi %>% filter(Species%in%sp_sig_coi),
+						aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel,group = Species),alpha=0.6)+
+	facet_wrap(~TrophicLevel,ncol=2)+
+	scale_color_manual(values=trophic_color_coi)+
+	labs(y='eDNA index change (mean of all pairwise comparisons)',x='Pairwise comparison (treatment)')+
 	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Trophic Level response.jpg'),p0)
+	theme_bw()+
+	theme(axis.text.x = element_text(angle = 45, hjust = 1),
+				legend.position = 'none',
+				axis.title = element_text(size = 15),
+				axis.text = element_text(size = 14),
+				strip.text = element_text(size=15))
+# ggsave(here('plots','Figure 2_coi.jpg'),p1,width=8,heigh=12)
 
-p1 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Planktivores') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Planktivores')+
+p2 <-
+ggplot()+
+	geom_boxplot(data=plot_data_2_mv1,
+						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),outlier.shape = NA,size=0.8,coef = 0)+
+	geom_point(data=plot_data_2_mv1 %>% filter(!(Species%in%sp_sig_mv1)),aes(x=Treatment,y=mean_eDNA_ch),color='grey',alpha=0.5)+
+	geom_line(data=plot_data_2_mv1 %>% filter(!(Species%in%sp_sig_mv1)),aes(x=Treatment,y=mean_eDNA_ch,group = Species),color='grey',alpha=0.6)+
+	geom_point(data=plot_data_2_mv1 %>% filter(Species%in%sp_sig_mv1),
+						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),alpha=0.5)+
+	geom_line(data=plot_data_2_mv1 %>% filter(Species%in%sp_sig_mv1),
+						aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel,group = Species),alpha=0.6)+
+	facet_wrap(~TrophicLevel,ncol=1)+
+	scale_color_manual(values=trophic_color_mv1)+
+	labs(y='eDNA index change (mean of all pairwise comparisons)',x='Pairwise comparison (treatment)')+
 	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Planktivores.jpg'),p1)
+	theme_bw()+
+	theme(axis.text.x = element_text(angle = 45, hjust = 1),
+				legend.position = 'none',
+				axis.title = element_text(size = 15),
+				axis.text = element_text(size = 14),
+				strip.text = element_text(size=15))
+# ggsave(here('plots','Figure 2_mv1.jpg'),p2,width=6,heigh=12)
 
-p2 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Gelatinous zooplankton') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Gelatinous zooplankton')+
+
+
+
+trophic_color_comb <- c('#AF4B66',#benthic,
+											 '#E37447',#gel,
+											 "#3292A0",#plank,
+											 '#E3B15B',#for_co1,
+											 "#61BEA4",#filt,
+											 "#9BA554",#prim,
+											 '#E3B15B',#for_mv1,
+											 '#053060',#apex
+											 '#7bb7d5'#meso
+)
+
+
+names(trophic_color_comb) <- c('Benthic invertebrates (COI)',
+															'Gelatinous zooplankton (COI)',
+															'Planktivores (COI)',
+															'Forage species (COI)',
+															'Filter feeders (COI)',
+															'Primary producers (COI)',
+															'Forage species (MV1)',
+															'Apex predators (MV1)',
+															'Mesopredators (MV1)')
+
+plot_data_3 <- ch_data_coi %>% 
+	filter(!is.na(TrophicLevel)) %>% 
+	group_by(Species,TrophicLevel,Treatment) %>% 
+	summarise(mean_eDNA_ch=mean(value)) %>% 
+	mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+	ungroup() %>% 
+	filter(TrophicLevel%in%names(trophic_color_coi)) %>% mutate(Marker='COI') %>% 
+	rbind(.,
+				ch_data_mv1 %>% 
+					filter(!is.na(TrophicLevel)) %>% 
+					group_by(Species,TrophicLevel,Treatment) %>% 
+					summarise(mean_eDNA_ch=mean(value)) %>% 
+					mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+					ungroup() %>% 
+					filter(TrophicLevel%in%names(trophic_color_mv1)) %>% mutate(Marker='MV1')
+	) %>% 
+	mutate(TrophicLevel=paste0(TrophicLevel,' (',Marker,')')) %>% 
+	mutate(TrophicLevel=factor(TrophicLevel,levels = names(trophic_color_comb)))
+
+p3 <- ggplot()+
+	geom_boxplot(data=plot_data_3,
+							 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),outlier.shape = NA,size=0.8,coef = 0)+
+	geom_point(data=plot_data_3 %>% filter(!(Species%in%c(sp_sig_mv1,sp_sig_coi))),aes(x=Treatment,y=mean_eDNA_ch),color='grey',alpha=0.5)+
+	geom_line(data=plot_data_3 %>% filter(!(Species%in%c(sp_sig_mv1,sp_sig_coi))),aes(x=Treatment,y=mean_eDNA_ch,group = Species),color='grey',alpha=0.6)+
+	geom_point(data=plot_data_3 %>% filter(Species%in%c(sp_sig_mv1,sp_sig_coi)),
+						 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),alpha=0.5)+
+	geom_line(data=plot_data_3 %>% filter(Species%in%c(sp_sig_mv1,sp_sig_coi)),
+						aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel,group = Species),alpha=0.6)+
+	facet_wrap(~TrophicLevel,ncol=3)+
+	scale_color_manual(values=trophic_color_comb)+
+	labs(y='eDNA index change (mean of all pairwise comparisons)',x='Pairwise comparison (treatment)')+
 	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Gelatinous zooplankto.jpg'),p2)
+	theme_bw()+
+	theme(axis.text.x = element_text(angle = 45, hjust = 1),
+				legend.position = 'none',
+				axis.title = element_text(size = 15),
+				axis.text = element_text(size = 14),
+				strip.text = element_text(size=15))
 
-
-p3 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Filter feeders') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Filter feeders')+
-	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Filter feeders.jpg'),p3)
-
-p4 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Benthic invertebrates') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Benthic invertebrates')+
-	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Benthic invertebrates.jpg'),p4)
-
-p5 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Primary producers') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Primary producers')+
-	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Primary producers.jpg'),p5)
-
-p6 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Forage species') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Forage species')+
-	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Forage species.jpg'),p6)
-
-p7 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Parasites') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	geom_abline(intercept=0,slope=0,lty=2)+
-	ggtitle('Parasites')+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Parasites.jpg'),p7)
-
-p8 <- ch_data %>%
-	filter(Species%in%sp_sig) %>% 
-	filter(TrophicLevel=='Pathogens') %>% 
-	ggline(x='Treatment',y='value',add = c('mean_se'),color='Species')+
-	labs(y = 'eDNA index change')+
-	ggtitle('Pathogens')+
-	geom_abline(intercept=0,slope=0,lty=2)+
-	annotate("text",x = Inf,y = 0,label = "no change",hjust = 1.1,vjust = -0.5)
-ggsave(here('plots','sp_changes','Pathogens.jpg'),p8)
-
-
+ggsave(here('plots','Figure 2_cmb.jpg'),p3,width=10,heigh=12)

@@ -30,7 +30,7 @@ meta <- data.frame(tube=as.character(c(1:8)),
 									 l=rep(c('light','no_light'),4))
 comm <- data.frame(sp_1=c(3,4,1,0,6,4,0,1),
 									 sp_2=c(1,2,8,6,1,0,6,8),
-									 sp_3=c(1,2,9,6,1,0,10,3),
+									 # sp_3=c(1,2,9,6,1,0,10,3),
 									 sp_4=c(0,1,1,6,1,0,1,7)) %>% 
 	t() %>% as.data.frame() %>% setNames(as.character(1:8))
 
