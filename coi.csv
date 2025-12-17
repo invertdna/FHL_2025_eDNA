@@ -1,0 +1,195 @@
+Species,Day-Night,Light-No_Light(day),Light-No_Light(night)
+Benthic invertebrates,,,
+Alitta,-0.236,0,0.301
+Diopatra,-0.109,-0.022,-0.233
+Dorvilleidae,-0.041,0,-0.021
+Eumida longicornuta,0.094,-0.042,0.04
+Eupentacta pseudoquinquesemita,0.065,0.029,-0.001
+Glycera americana,-0.15,-0.006,-0.013
+Glycera robusta,-0.111,0.003,-0.144
+Glycinde,-0.091,-0.013,0.197
+Laonice,-0.085,-0.001,-0.002
+Leodice valens,0.24,-0.252,-0.032
+Margarites pupillus,0.011,-0.064,-0.017
+Metridium,0.057,0.027,-0.005
+Micropodarke dubia,0.111,0.102,0.051
+Neosabellaria cementarium,-0.016,-0.118,0.001
+Nudibranchia,-0.021,-0.021,-0.105
+Paleanotus bellis,-0.036,0.005,-0.156
+Pectinaria californiensis,0.058,0.091,0.001
+Phyllodocida,-0.039,0.005,-0.151
+Platynereis,-0.059,0.016,0.291
+Platynereis bicanaliculata,-0.017,-0.017,-0.144
+Polynoidae,0.031,-0.076,0.006
+Prionospio multibranchiata,-0.095,0.032,0.055
+Pseudopolydora paucibranchiata,-0.048,-0.001,0.033
+Sabellariidae,-0.051,-0.048,-0.149
+Schizobranchia insignis,0.021,-0.024,0.032
+Strongylocentrotus,0.102,0.128,-0.019
+Syllidae,-0.036,0.025,0.004
+Filter feeders,,,
+Alcyonidium,0.08,0.054,-0.028
+Balanidae,0.03,-0.073,-0.028
+Balanus,0.038,-0.081,-0.017
+Balanus glandula,0.104,-0.103,-0.028
+Boltenia,0.035,0.022,0.03
+Chlamys,0.046,-0.042,-0.043
+Cliona californiana,0.013,-0.062,-0.066
+Compsomyax,0.053,-0.114,0.004
+Compsomyax subdiaphana,0.121,0.005,-0.002
+Crisularia pacifica,0.162,-0.098,-0.035
+Halichondria panicea,0.098,0.087,-0.023
+Humilaria kennerleyi,0.071,0.011,-0.003
+Macoma nasuta,0.063,-0.004,0.09
+Membranipora,0.076,-0.078,-0.028
+Membranipora membranacea,0.085,-0.047,-0.062
+Modiolus modiolus,-0.046,0.006,-0.006
+Mytilus,0.035,0.026,-0.024
+Nutricola,0.012,0.024,0.031
+Nuttallia,0.15,0.161,0.002
+Perophora,0.012,-0.038,-0.049
+Saxidomus,0.042,-0.055,-0.009
+Schizoporella japonica,0.054,-0.136,-0.079
+Semibalanus cariosus,-0.016,0.003,-0.08
+Forage species,,,
+Clupea pallasii,0.176,0.202,-0.119
+Hypomesus pretiosus,0.18,0.041,0
+Gelatinous zooplankton,,,
+Aequorea,0.11,-0.047,-0.006
+Aglaophenia latirostris,-0.036,-0.146,-0.106
+Amphinema dinema,0.111,-0.095,-0.037
+Aurelia,0.064,0.14,-0.111
+Aurelia labiata,-0.027,0.006,-0.116
+Bolinopsis microptera,0.07,-0.017,-0.037
+Bougainvillia,0.079,-0.134,-0.012
+Bougainvillia muscus,0.145,-0.147,-0.017
+Calycella syringa,0.026,-0.07,-0.001
+Chelophyes appendiculata,0.025,-0.069,0.004
+Clytia gregaria,0.122,-0.151,-0.058
+Coryne eximia,0.099,-0.012,-0.017
+Hataia parva,-0.032,-0.003,-0.064
+Kirchenpaueria pinnata,0.114,-0.119,-0.009
+Lafoea,0.101,-0.077,0.106
+Leptothecata,0.183,0.008,-0.052
+Mitrocoma cellularia,0.261,0.045,-0.01
+Obelia,0.147,-0.01,-0.01
+Obelia dichotoma,0.104,-0.102,0
+Orthopyxis,0.1,0.098,-0.019
+Phacellophora camtschatica,0.081,0.19,0.11
+Pleurobrachia bachei,0.061,-0.07,-0.041
+Plumularia lagenifera,0.085,-0.107,-0.014
+Proboscidactyla flavicirrata,-0.025,-0.027,-0.129
+Stomotoca atra,0.057,0.1,0.085
+Planktivores,,,
+Acartia longiremis,0.023,0.154,-0.164
+Amonardia perturbata,0.03,0.062,0.009
+Chondracanthus,0.275,-0.034,-0.03
+Diosaccus spinatus,-0.035,-0.016,0.012
+Oithona,0.006,-0.13,-0.068
+Paracalanus,0.048,0.025,0.032
+Pseudocalanus,-0.047,-0.07,-0.093
+Pseudocalanus moultoni,-0.01,-0.064,-0.057
+Pseudocalanus newmani,-0.01,-0.048,-0.057
+Synchaeta,-0.02,0.03,-0.212
+Primary producers,,,
+Asterionellopsis glacialis,-0.028,0.059,-0.114
+Attheya longicornis,0.057,-0.069,-0.142
+Aureococcus anophagefferens,-0.063,-0.17,-0.099
+Bangiaceae,0.103,0.165,0
+Bathycoccus,0.056,-0.08,0.011
+Bathycoccus prasinos,0.052,0.035,-0.059
+Callophyllis edentata,0.084,-0.026,0.007
+Chaetoceros,0.254,-0.006,-0.125
+Chaetoceros socialis,0.105,-0.09,-0.115
+Chordariaceae,0.1,0.048,-0.137
+Cocconeiopsis,0.109,-0.038,-0.016
+Coscinodiscus granii,0.025,-0.037,-0.166
+Cylindrotheca,0.18,0.083,-0.01
+Cylindrotheca closterium,0.362,0.069,-0.026
+Cymbomonas,0.213,0.043,-0.017
+Cymbomonas tetramitiformis,0.152,0.112,-0.03
+Dictyocha speculum,0.346,0.153,-0.116
+Dinophysis,0.099,0.059,-0.079
+Dinophysis norvegica,0.156,0.104,-0.023
+Ditylum brightwellii,0.092,-0.141,-0.088
+Eucampia,0.161,0.107,-0.065
+Eucampia zodiacus,0.099,-0.041,-0.051
+Fucus,0.17,0.091,-0.021
+Gonyaulax,0.145,0.098,-0.035
+Guinardia,0.018,-0.062,-0.134
+Guinardia delicatula,0.128,-0.185,-0.047
+Hemiaulus,0.159,-0.025,-0.014
+Heterocapsa,0.056,-0.156,-0.033
+Heterocapsa rotundata,-0.165,-0.165,-0.213
+Heterosigma akashiwo,0.217,0.155,-0.094
+Karlodinium veneficum,0.076,0.069,-0.067
+Laminariaceae,0.197,-0.089,-0.013
+Leucocryptos marina,0.205,0.297,0.045
+Melosira nummuloides,0.177,0.133,0.007
+Micromonas,0.063,0.057,-0.066
+Micromonas pusilla,0.231,0.082,-0.173
+Minutocellus,0.243,0.165,-0.199
+Minutocellus polymorphus,0.283,0.043,-0.115
+Myrionema balticum,0.136,0.011,-0.087
+Navicula,0.411,0.097,-0.007
+Neoporphyra,0.196,0.115,-0.089
+Nitzschia,0.172,0.044,-0.016
+Noelaerhabdaceae,0.277,0.025,-0.203
+Paralia sulcata,0.103,-0.145,-0.077
+Percursaria,0.079,0.029,0
+Phaeocystis,0.124,-0.001,-0.024
+Pleurosigma,0.265,-0.033,-0.002
+Podosira stelligera,0.104,-0.038,0.012
+Polyneura latissima,0.087,-0.023,0.06
+Prorocentrum,0.109,0.08,-0.009
+Pseudochattonella verruculosa,0.317,0.152,-0.088
+Pylaiella,0.225,-0.03,0.008
+Pylaiella washingtoniensis,0.266,-0.098,-0.046
+Rhizosolenia setigera,0.075,-0.052,0.002
+Schizymenia pacifica,0.026,-0.15,0.078
+Skeletonema,0.12,-0.012,-0.081
+Stephanopyxis turris,0.005,0.034,-0.06
+Teleaulax,0.052,-0.065,-0.052
+Teleaulax amphioxeia,0.103,0.05,0.021
+Thalassionema nitzschioides,0.208,-0.028,-0.054
+Thalassiosira,0.099,-0.011,-0.055
+Thalassiosira nordenskioeldii,0.355,0.039,-0.087
+Thalassiosirales,0.174,0.028,-0.024
+Triparma,0.235,0.019,-0.115
+Vicicitus,0.15,-0.039,-0.015
+Apex predators,,,
+Oncorhynchus,0.051,-0.11,0.011
+Oncorhynchus gorbuscha,0.072,-0.011,0.01
+Oncorhynchus keta,0.097,-0.089,0.017
+Phoca vitulina,0.01,-0.008,0.059
+Sebastes,-0.034,-0.034,0.097
+Forage species,,,
+Ammodytes personatus,-0.014,-0.049,-0.004
+Clupea pallasii,-0.005,0.056,-0.048
+Hypomesus,0.22,0.037,-0.002
+Mesopredators,,,
+Anoplarchus,0.058,0.023,0.082
+Apodichthys flavidus,-0.025,-0.102,-0.059
+Artedius fenestralis,-0.022,0.004,0.052
+Artedius harringtoni,-0.123,0.039,0.117
+Artedius lateralis,-0.049,-0.014,0.067
+Aulorhynchus flavidus,-0.118,-0.006,-0.086
+Blepsias cirrhosus,-0.043,0.002,0.053
+Citharichthys sordidus,0.017,-0.002,0.059
+Citharichthys stigmaeus,-0.037,-0.008,-0.06
+Gadus,-0.141,-0.015,0.096
+Gallus,-0.044,0.008,-0.145
+Gasterosteus aculeatus,-0.027,0.006,-0.06
+Gobiesox maeandricus,0.011,-0.06,0.019
+Hexagrammos,0.013,-0.056,0.041
+Leptocottus armatus,0.088,-0.026,0.055
+Lumpenus sagitta,-0.048,-0.04,-0.01
+Myoxocephalus,0.085,0.015,0.007
+Nautichthys oculofasciatus,-0.039,-0.024,0.102
+Oligocottus,0.037,0.063,0.064
+Pholis laeta,0.076,-0.025,0.06
+Pholis ornata,0.108,0.012,0.093
+Phytichthys chirus,0.021,-0.088,0.09
+Pleuronectidae,0.008,-0.033,0.073
+Pleuronichthys coenosus,-0.029,-0.022,-0.043
+Xiphister,0.05,-0.068,0.01

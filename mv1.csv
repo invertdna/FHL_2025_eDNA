@@ -1,0 +1,37 @@
+Species,Day-Night,Light-No_Light(day),Light-No_Light(night)
+Apex predators,,,
+Oncorhynchus,0.051,-0.11,0.011
+Oncorhynchus gorbuscha,0.072,-0.011,0.01
+Oncorhynchus keta,0.097,-0.089,0.017
+Phoca vitulina,0.01,-0.008,0.059
+Sebastes,-0.034,-0.034,0.097
+Forage species,,,
+Ammodytes personatus,-0.014,-0.049,-0.004
+Clupea pallasii,-0.005,0.056,-0.048
+Hypomesus,0.22,0.037,-0.002
+Mesopredators,,,
+Anoplarchus,0.058,0.023,0.082
+Apodichthys flavidus,-0.025,-0.102,-0.059
+Artedius fenestralis,-0.022,0.004,0.052
+Artedius harringtoni,-0.123,0.039,0.117
+Artedius lateralis,-0.049,-0.014,0.067
+Aulorhynchus flavidus,-0.118,-0.006,-0.086
+Blepsias cirrhosus,-0.043,0.002,0.053
+Citharichthys sordidus,0.017,-0.002,0.059
+Citharichthys stigmaeus,-0.037,-0.008,-0.06
+Gadus,-0.141,-0.015,0.096
+Gallus,-0.044,0.008,-0.145
+Gasterosteus aculeatus,-0.027,0.006,-0.06
+Gobiesox maeandricus,0.011,-0.06,0.019
+Hexagrammos,0.013,-0.056,0.041
+Leptocottus armatus,0.088,-0.026,0.055
+Lumpenus sagitta,-0.048,-0.04,-0.01
+Myoxocephalus,0.085,0.015,0.007
+Nautichthys oculofasciatus,-0.039,-0.024,0.102
+Oligocottus,0.037,0.063,0.064
+Pholis laeta,0.076,-0.025,0.06
+Pholis ornata,0.108,0.012,0.093
+Phytichthys chirus,0.021,-0.088,0.09
+Pleuronectidae,0.008,-0.033,0.073
+Pleuronichthys coenosus,-0.029,-0.022,-0.043
+Xiphister,0.05,-0.068,0.01

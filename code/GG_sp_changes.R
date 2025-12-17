@@ -106,18 +106,21 @@ pairwise_row_diff <- function(comm) {
 }
 
 # Load data -----------------------------------------------------------------------------------
+coi_raw <- readRDS(here('Output','coi_cur_raw.rds'))
 coi_eDNAidx <- readRDS(here('Output','coi_cur_eDNAidx.rds'))
 coi_bin <- readRDS(here('Output','coi_cur_pa.rds'))
 coi_prop <- readRDS(here('Output','coi_cur_prop.rds'))
 coi_prop_comm <- readRDS(here('Output','coi_cur_prop_common.rds'))
 coi_meta <- readRDS(here('Output','coi_metadata.rds'))
 
+mfu_raw <- readRDS(here('Output','mfu_cur_raw.rds'))
 mfu_eDNAidx <- readRDS(here('Output','mfu_cur_eDNAidx.rds'))
 mfu_bin <- readRDS(here('Output','mfu_cur_pa.rds'))
 mfu_prop <- readRDS(here('Output','mfu_cur_prop.rds'))
 mfu_prop_comm <- readRDS(here('Output','mfu_cur_prop_common.rds'))
 mfu_meta <- readRDS(here('Output','mfu_metadata.rds'))
 
+mv1_raw <- readRDS(here('Output','mv1_cur_raw.rds'))
 mv1_eDNAidx <- readRDS(here('Output','mv1_cur_eDNAidx.rds'))
 mv1_bin <- readRDS(here('Output','mv1_cur_pa.rds'))
 mv1_prop <- readRDS(here('Output','mv1_cur_prop.rds'))
@@ -538,7 +541,11 @@ plot_data_3 <- ch_data_coi %>%
 	filter(!is.na(TrophicLevel)) %>% 
 	group_by(Species,TrophicLevel,Treatment) %>% 
 	summarise(mean_eDNA_ch=mean(value)) %>% 
-	mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+	mutate(Treatment=if_else(Treatment=='Light-No_Light(night)','Light - NoLight (night)',Treatment)) %>% 
+	mutate(Treatment=if_else(Treatment=='Day-Night','Day - Night',Treatment)) %>% 
+	mutate(Treatment=if_else(Treatment=='Light-No_Light(day)','Light - NoLight (day)',Treatment)) %>% 
+	mutate(Treatment=factor(Treatment,levels = c('Light - NoLight (night)','Day - Night','Light - NoLight (day)'))) %>% 
+	# mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
 	ungroup() %>% 
 	filter(TrophicLevel%in%names(trophic_color_coi)) %>% mutate(Marker='COI') %>% 
 	rbind(.,
@@ -546,7 +553,11 @@ plot_data_3 <- ch_data_coi %>%
 					filter(!is.na(TrophicLevel)) %>% 
 					group_by(Species,TrophicLevel,Treatment) %>% 
 					summarise(mean_eDNA_ch=mean(value)) %>% 
-					mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
+					mutate(Treatment=if_else(Treatment=='Light-No_Light(night)','Light - NoLight (night)',Treatment)) %>% 
+					mutate(Treatment=if_else(Treatment=='Day-Night','Day - Night',Treatment)) %>% 
+					mutate(Treatment=if_else(Treatment=='Light-No_Light(day)','Light - NoLight (day)',Treatment)) %>% 
+					mutate(Treatment=factor(Treatment,levels = c('Light - NoLight (night)','Day - Night','Light - NoLight (day)'))) %>% 
+					# mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
 					ungroup() %>% 
 					filter(TrophicLevel%in%names(trophic_color_mv1)) %>% mutate(Marker='MV1')
 	) %>% 
@@ -569,8 +580,120 @@ p3 <- ggplot()+
 	theme_bw()+
 	theme(axis.text.x = element_text(angle = 45, hjust = 1),
 				legend.position = 'none',
-				axis.title = element_text(size = 15),
-				axis.text = element_text(size = 14),
-				strip.text = element_text(size=15))
+				axis.title = element_text(size = 19),
+				axis.text = element_text(size = 15),
+				strip.text = element_text(size=16))
 
-ggsave(here('plots','Figure 2_cmb.jpg'),p3,width=10,heigh=12)
+
+ggsave(here('plots','Figure 2_cmb.jpg'),p3,width=11,heigh=12)
+
+
+
+
+x <-
+plot_data_coi %>% 
+	# plot_data_2_mv1 %>% 
+	pivot_wider(names_from = Treatment,
+							values_from = mean_eDNA_ch) %>% 
+	# filter(TrophicLevel=='Benthic invertebrates') %>% 
+	# filter(!(Species%in%sp_sig_coi)) %>% 
+	arrange(TrophicLevel,Species) %>% 
+	as.data.frame() %>% 
+	mutate(`Day-Night`=round(`Day-Night`,3)) %>% 
+	mutate(`Light-No_Light(day)`=round(`Light-No_Light(day)`,3)) %>% 
+	mutate(`Light-No_Light(night)`=round(`Light-No_Light(night)`,3))
+
+# write.csv(x,here('coi.csv'),row.names = F)
+# write.csv(x,here('mv1.csv'),row.names = F)
+
+plot_data_coi %>% 
+	pivot_wider(names_from = Treatment,
+							values_from = mean_eDNA_ch) %>% 
+	filter(TrophicLevel=='Benthic invertebrates') %>%
+	arrange(TrophicLevel,Species) %>% 
+	print(n=100)
+
+
+
+# Sp accumulation curves and rarefaction curves -----------------------------------------------
+
+# COI
+sac <- specaccum(coi_bin %>% t(), method = "random")
+
+sp_acc <- data.frame(Sites = sac$sites, Richness = sac$richness, sd = sac$sd)
+
+pp1 <- sp_acc %>%
+	mutate(lo=Richness-(2*sd)) %>% 
+	mutate(up=Richness+(2*sd)) %>% 
+	ggplot()+
+	geom_errorbar(aes(x=Sites,ymin = lo,ymax = up))+
+	geom_point(aes(x=Sites,y=Richness))+
+	labs(x='Sampling effort (no of samples)',y='ASV richness')+
+	theme_bw()+
+	theme(axis.text = element_text(size=15),
+				axis.title = element_text(size=19),
+				strip.text = element_text(size=16))
+
+
+
+rare_list <- rarecurve(
+	coi_raw,
+	step = 100,
+	# sample = min(rowSums(coi_bin %>% t())),
+	tidy = TRUE
+)
+
+pp2 <- rare_list %>% 
+	ggplot(aes(x = Sample, y = Species, group = Site)) +
+	geom_line(alpha = 0.6) +
+	labs(
+		x = "Sequencing depth (reads)",
+		y = "ASV richness") +
+	theme_bw()+
+	theme(axis.text = element_text(size=15),
+				axis.title = element_text(size=19),
+				strip.text = element_text(size=16))
+
+p1 <- cowplot::plot_grid(pp1,pp2)
+ggsave(here('plots','coi_acc_rare_curves.jpg'),p1,width = 12,height = 6)
+
+
+# MV1
+sac <- specaccum(mv1_bin %>% t(), method = "random")
+
+sp_acc <- data.frame(Sites = sac$sites, Richness = sac$richness, sd = sac$sd)
+
+pp1 <- sp_acc %>%
+	mutate(lo=Richness-(2*sd)) %>% 
+	mutate(up=Richness+(2*sd)) %>% 
+	ggplot()+
+	geom_errorbar(aes(x=Sites,ymin = lo,ymax = up))+
+	geom_point(aes(x=Sites,y=Richness))+
+	labs(x='Sampling effort (no of samples)',y='ASV richness')+
+	theme_bw()+
+	theme(axis.text = element_text(size=15),
+				axis.title = element_text(size=19),
+				strip.text = element_text(size=16))
+
+
+
+rare_list <- rarecurve(
+	mv1_raw,
+	step = 100,
+	# sample = min(rowSums(coi_bin %>% t())),
+	tidy = TRUE
+)
+
+pp2 <- rare_list %>% 
+	ggplot(aes(x = Sample, y = Species, group = Site)) +
+	geom_line(alpha = 0.6) +
+	labs(
+		x = "Sequencing depth (reads)",
+		y = "ASV richness") +
+	theme_bw()+
+	theme(axis.text = element_text(size=15),
+				axis.title = element_text(size=19),
+				strip.text = element_text(size=16))
+
+p2 <- cowplot::plot_grid(pp1,pp2)
+ggsave(here('plots','mv1_acc_rare_curves.jpg'),p2,width = 12,height = 6)

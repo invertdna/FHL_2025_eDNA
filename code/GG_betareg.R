@@ -207,20 +207,39 @@ for (k in 1:length(names_of_iterations)) {
 # Plot fig 1 (make sure you have selected the correct model output s[[1]]=COI on eDNAidx);
 # Check names_of_iterations[k] to know which data has been inputed in the model
 
-fig_1 <-
+fig_1_a <-
 		s[[1]] %>%
+	mutate(marker='COI') %>% 
+	bind_rows(	s[[4]] %>% mutate(marker='MV1')) %>% 
+	mutate(param=if_else(param=='Time','Time (days)',param)) %>% 
+	mutate(param=if_else(param=='Samp_period','Sampling period',param)) %>% 
+	mutate(param=if_else(param=='Light_day','Light effect during day',param)) %>% 
+	mutate(param=if_else(param=='Light_night','Light effect during night',param)) %>% 
+	mutate(param=if_else(param=='Bio_rep','Biological replicates',param)) %>% 
+	mutate(param=factor(param,levels=c('Intercept',
+																		 'Time (days)',
+																		 'Sampling period',
+																		 'Light effect during day',
+																		 'Light effect during night',
+																		 'Biological replicates'
+																		 ))) %>% 
 		mutate(lo=Estimate-`Std. Error`) %>% 
 		mutate(up=Estimate+`Std. Error`) %>% 
 		ggplot()+
 		geom_point(aes(x=param,y=Estimate))+
 		geom_errorbar(aes(x=param,ymin=lo,ymax=up),width=0.2) +
 		theme_bw()+
+	facet_grid(~marker)+
 		labs(y='Dissimilarity effect (logit-scale)',
 				 x= 'Parameters')+
-		theme(axis.text = element_text(size=14),
-					axis.title = element_text(size=16),
-					axis.text.x = element_text(angle = 45, vjust = 1.0, hjust = 1))
-	
+		theme(axis.text = element_text(size=15),
+					axis.title = element_text(size=19),
+					strip.text = element_text(size=16),
+					axis.text.x = element_text(angle = 45, 
+																		 vjust = 1.0, hjust = 1))
+
+
+
 	# ggsave(here('plots',paste0('Fig_1_',names_of_iterations[k],'.jpg')),fig_1,width = 10,height = 8)
 	
 # Creating the data that will be used for figure 3
@@ -279,7 +298,7 @@ plot_dat2 <- design_mat_list[[4]] %>%
 	select(delta_date,D_est,D_mean,group)
 
 # Then joiing the two data together to be able to plot them together
-fig_3 <- 
+fig_1_b <- 
 	plot_dat1 %>% mutate(marker='COI') %>% rbind(.,plot_dat2 %>% mutate(marker='MV1')) %>% 
 		ggplot()+
 		geom_line(aes(x=delta_date,y=D_est,colour = factor(group)),size=1,lty=2)+
@@ -296,11 +315,14 @@ fig_3 <-
 				 y='Community dissimilarity')+
 	facet_wrap(~marker)+
 		theme_bw()+
-	theme(axis.title = element_text(size=15),
-				axis.text = element_text(size=14),
+	theme(axis.text = element_text(size=15),
+				axis.title = element_text(size=19),
+				strip.text = element_text(size=16),
 				legend.text = element_text(size=14),
 				legend.title = element_blank(),
 				legend.position = 'bottom')
-	ggsave(here('plots',paste0('Fig_3_xxx','.jpg')),fig_3,width = 13,height = 8)
+
+fig_1 <- cowplot::plot_grid(fig_1_a,fig_1_b,nrow = 2,align = 'v')
+ggsave(here('plots',paste0('Fig_2','.jpg')),fig_1,width = 10,height = 12)
 
 # c("#1f78b4", "#e31a1c", "#33a02c", "#6a3d9a")

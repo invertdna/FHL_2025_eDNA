@@ -1,0 +1,153 @@
+"Species","TrophicLevel","Day-Night","Light-No_Light(day)","Light-No_Light(night)"
+"Alitta","Benthic invertebrates",-0.236,0,0.301
+"Diopatra","Benthic invertebrates",-0.109,-0.022,-0.233
+"Dorvilleidae","Benthic invertebrates",-0.041,0,-0.021
+"Eumida longicornuta","Benthic invertebrates",0.094,-0.042,0.04
+"Eupentacta pseudoquinquesemita","Benthic invertebrates",0.065,0.029,-0.001
+"Glycera americana","Benthic invertebrates",-0.15,-0.006,-0.013
+"Glycera robusta","Benthic invertebrates",-0.111,0.003,-0.144
+"Glycinde","Benthic invertebrates",-0.091,-0.013,0.197
+"Laonice","Benthic invertebrates",-0.085,-0.001,-0.002
+"Leodice valens","Benthic invertebrates",0.24,-0.252,-0.032
+"Margarites pupillus","Benthic invertebrates",0.011,-0.064,-0.017
+"Metridium","Benthic invertebrates",0.057,0.027,-0.005
+"Micropodarke dubia","Benthic invertebrates",0.111,0.102,0.051
+"Neosabellaria cementarium","Benthic invertebrates",-0.016,-0.118,0.001
+"Nudibranchia","Benthic invertebrates",-0.021,-0.021,-0.105
+"Paleanotus bellis","Benthic invertebrates",-0.036,0.005,-0.156
+"Pectinaria californiensis","Benthic invertebrates",0.058,0.091,0.001
+"Phyllodocida","Benthic invertebrates",-0.039,0.005,-0.151
+"Platynereis","Benthic invertebrates",-0.059,0.016,0.291
+"Platynereis bicanaliculata","Benthic invertebrates",-0.017,-0.017,-0.144
+"Polynoidae","Benthic invertebrates",0.031,-0.076,0.006
+"Prionospio multibranchiata","Benthic invertebrates",-0.095,0.032,0.055
+"Pseudopolydora paucibranchiata","Benthic invertebrates",-0.048,-0.001,0.033
+"Sabellariidae","Benthic invertebrates",-0.051,-0.048,-0.149
+"Schizobranchia insignis","Benthic invertebrates",0.021,-0.024,0.032
+"Strongylocentrotus","Benthic invertebrates",0.102,0.128,-0.019
+"Syllidae","Benthic invertebrates",-0.036,0.025,0.004
+"Alcyonidium","Filter feeders",0.08,0.054,-0.028
+"Balanidae","Filter feeders",0.03,-0.073,-0.028
+"Balanus","Filter feeders",0.038,-0.081,-0.017
+"Balanus glandula","Filter feeders",0.104,-0.103,-0.028
+"Boltenia","Filter feeders",0.035,0.022,0.03
+"Chlamys","Filter feeders",0.046,-0.042,-0.043
+"Cliona californiana","Filter feeders",0.013,-0.062,-0.066
+"Compsomyax","Filter feeders",0.053,-0.114,0.004
+"Compsomyax subdiaphana","Filter feeders",0.121,0.005,-0.002
+"Crisularia pacifica","Filter feeders",0.162,-0.098,-0.035
+"Halichondria panicea","Filter feeders",0.098,0.087,-0.023
+"Humilaria kennerleyi","Filter feeders",0.071,0.011,-0.003
+"Macoma nasuta","Filter feeders",0.063,-0.004,0.09
+"Membranipora","Filter feeders",0.076,-0.078,-0.028
+"Membranipora membranacea","Filter feeders",0.085,-0.047,-0.062
+"Modiolus modiolus","Filter feeders",-0.046,0.006,-0.006
+"Mytilus","Filter feeders",0.035,0.026,-0.024
+"Nutricola","Filter feeders",0.012,0.024,0.031
+"Nuttallia","Filter feeders",0.15,0.161,0.002
+"Perophora","Filter feeders",0.012,-0.038,-0.049
+"Saxidomus","Filter feeders",0.042,-0.055,-0.009
+"Schizoporella japonica","Filter feeders",0.054,-0.136,-0.079
+"Semibalanus cariosus","Filter feeders",-0.016,0.003,-0.08
+"Clupea pallasii","Forage species",0.176,0.202,-0.119
+"Hypomesus pretiosus","Forage species",0.18,0.041,0
+"Aequorea","Gelatinous zooplankton",0.11,-0.047,-0.006
+"Aglaophenia latirostris","Gelatinous zooplankton",-0.036,-0.146,-0.106
+"Amphinema dinema","Gelatinous zooplankton",0.111,-0.095,-0.037
+"Aurelia","Gelatinous zooplankton",0.064,0.14,-0.111
+"Aurelia labiata","Gelatinous zooplankton",-0.027,0.006,-0.116
+"Bolinopsis microptera","Gelatinous zooplankton",0.07,-0.017,-0.037
+"Bougainvillia","Gelatinous zooplankton",0.079,-0.134,-0.012
+"Bougainvillia muscus","Gelatinous zooplankton",0.145,-0.147,-0.017
+"Calycella syringa","Gelatinous zooplankton",0.026,-0.07,-0.001
+"Chelophyes appendiculata","Gelatinous zooplankton",0.025,-0.069,0.004
+"Clytia gregaria","Gelatinous zooplankton",0.122,-0.151,-0.058
+"Coryne eximia","Gelatinous zooplankton",0.099,-0.012,-0.017
+"Hataia parva","Gelatinous zooplankton",-0.032,-0.003,-0.064
+"Kirchenpaueria pinnata","Gelatinous zooplankton",0.114,-0.119,-0.009
+"Lafoea","Gelatinous zooplankton",0.101,-0.077,0.106
+"Leptothecata","Gelatinous zooplankton",0.183,0.008,-0.052
+"Mitrocoma cellularia","Gelatinous zooplankton",0.261,0.045,-0.01
+"Obelia","Gelatinous zooplankton",0.147,-0.01,-0.01
+"Obelia dichotoma","Gelatinous zooplankton",0.104,-0.102,0
+"Orthopyxis","Gelatinous zooplankton",0.1,0.098,-0.019
+"Phacellophora camtschatica","Gelatinous zooplankton",0.081,0.19,0.11
+"Pleurobrachia bachei","Gelatinous zooplankton",0.061,-0.07,-0.041
+"Plumularia lagenifera","Gelatinous zooplankton",0.085,-0.107,-0.014
+"Proboscidactyla flavicirrata","Gelatinous zooplankton",-0.025,-0.027,-0.129
+"Stomotoca atra","Gelatinous zooplankton",0.057,0.1,0.085
+"Acartia longiremis","Planktivores",0.023,0.154,-0.164
+"Amonardia perturbata","Planktivores",0.03,0.062,0.009
+"Chondracanthus","Planktivores",0.275,-0.034,-0.03
+"Diosaccus spinatus","Planktivores",-0.035,-0.016,0.012
+"Oithona","Planktivores",0.006,-0.13,-0.068
+"Paracalanus","Planktivores",0.048,0.025,0.032
+"Pseudocalanus","Planktivores",-0.047,-0.07,-0.093
+"Pseudocalanus moultoni","Planktivores",-0.01,-0.064,-0.057
+"Pseudocalanus newmani","Planktivores",-0.01,-0.048,-0.057
+"Synchaeta","Planktivores",-0.02,0.03,-0.212
+"Asterionellopsis glacialis","Primary producers",-0.028,0.059,-0.114
+"Attheya longicornis","Primary producers",0.057,-0.069,-0.142
+"Aureococcus anophagefferens","Primary producers",-0.063,-0.17,-0.099
+"Bangiaceae","Primary producers",0.103,0.165,0
+"Bathycoccus","Primary producers",0.056,-0.08,0.011
+"Bathycoccus prasinos","Primary producers",0.052,0.035,-0.059
+"Callophyllis edentata","Primary producers",0.084,-0.026,0.007
+"Chaetoceros","Primary producers",0.254,-0.006,-0.125
+"Chaetoceros socialis","Primary producers",0.105,-0.09,-0.115
+"Chordariaceae","Primary producers",0.1,0.048,-0.137
+"Cocconeiopsis","Primary producers",0.109,-0.038,-0.016
+"Coscinodiscus granii","Primary producers",0.025,-0.037,-0.166
+"Cylindrotheca","Primary producers",0.18,0.083,-0.01
+"Cylindrotheca closterium","Primary producers",0.362,0.069,-0.026
+"Cymbomonas","Primary producers",0.213,0.043,-0.017
+"Cymbomonas tetramitiformis","Primary producers",0.152,0.112,-0.03
+"Dictyocha speculum","Primary producers",0.346,0.153,-0.116
+"Dinophysis","Primary producers",0.099,0.059,-0.079
+"Dinophysis norvegica","Primary producers",0.156,0.104,-0.023
+"Ditylum brightwellii","Primary producers",0.092,-0.141,-0.088
+"Eucampia","Primary producers",0.161,0.107,-0.065
+"Eucampia zodiacus","Primary producers",0.099,-0.041,-0.051
+"Fucus","Primary producers",0.17,0.091,-0.021
+"Gonyaulax","Primary producers",0.145,0.098,-0.035
+"Guinardia","Primary producers",0.018,-0.062,-0.134
+"Guinardia delicatula","Primary producers",0.128,-0.185,-0.047
+"Hemiaulus","Primary producers",0.159,-0.025,-0.014
+"Heterocapsa","Primary producers",0.056,-0.156,-0.033
+"Heterocapsa rotundata","Primary producers",-0.165,-0.165,-0.213
+"Heterosigma akashiwo","Primary producers",0.217,0.155,-0.094
+"Karlodinium veneficum","Primary producers",0.076,0.069,-0.067
+"Laminariaceae","Primary producers",0.197,-0.089,-0.013
+"Leucocryptos marina","Primary producers",0.205,0.297,0.045
+"Melosira nummuloides","Primary producers",0.177,0.133,0.007
+"Micromonas","Primary producers",0.063,0.057,-0.066
+"Micromonas pusilla","Primary producers",0.231,0.082,-0.173
+"Minutocellus","Primary producers",0.243,0.165,-0.199
+"Minutocellus polymorphus","Primary producers",0.283,0.043,-0.115
+"Myrionema balticum","Primary producers",0.136,0.011,-0.087
+"Navicula","Primary producers",0.411,0.097,-0.007
+"Neoporphyra","Primary producers",0.196,0.115,-0.089
+"Nitzschia","Primary producers",0.172,0.044,-0.016
+"Noelaerhabdaceae","Primary producers",0.277,0.025,-0.203
+"Paralia sulcata","Primary producers",0.103,-0.145,-0.077
+"Percursaria","Primary producers",0.079,0.029,0
+"Phaeocystis","Primary producers",0.124,-0.001,-0.024
+"Pleurosigma","Primary producers",0.265,-0.033,-0.002
+"Podosira stelligera","Primary producers",0.104,-0.038,0.012
+"Polyneura latissima","Primary producers",0.087,-0.023,0.06
+"Prorocentrum","Primary producers",0.109,0.08,-0.009
+"Pseudochattonella verruculosa","Primary producers",0.317,0.152,-0.088
+"Pylaiella","Primary producers",0.225,-0.03,0.008
+"Pylaiella washingtoniensis","Primary producers",0.266,-0.098,-0.046
+"Rhizosolenia setigera","Primary producers",0.075,-0.052,0.002
+"Schizymenia pacifica","Primary producers",0.026,-0.15,0.078
+"Skeletonema","Primary producers",0.12,-0.012,-0.081
+"Stephanopyxis turris","Primary producers",0.005,0.034,-0.06
+"Teleaulax","Primary producers",0.052,-0.065,-0.052
+"Teleaulax amphioxeia","Primary producers",0.103,0.05,0.021
+"Thalassionema nitzschioides","Primary producers",0.208,-0.028,-0.054
+"Thalassiosira","Primary producers",0.099,-0.011,-0.055
+"Thalassiosira nordenskioeldii","Primary producers",0.355,0.039,-0.087
+"Thalassiosirales","Primary producers",0.174,0.028,-0.024
+"Triparma","Primary producers",0.235,0.019,-0.115
+"Vicicitus","Primary producers",0.15,-0.039,-0.015
