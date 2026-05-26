@@ -183,6 +183,13 @@ design_mat_coi_eDNAidx %>%
 	rename(Light_v_Nolight='tre_cat') %>% 
 	rename(Biological_replciate='rep_cat')
 
+design_mat_coi_eDNAidx %>% 
+	count(time_cat,tre_cat,light_day,light_night,rep_cat) %>% 
+	rename(Day_v_night='time_cat') %>% 
+	# rename(Date_difference='delta_date') %>% 
+	rename(Light_v_Nolight='tre_cat') %>% 
+	rename(Biological_replciate='rep_cat')
+
 # Create a list for capturing all the model outputs
 s <- vector('list')
 
@@ -206,11 +213,15 @@ for (k in 1:length(names_of_iterations)) {
 
 # Plot fig 1 (make sure you have selected the correct model output s[[1]]=COI on eDNAidx);
 # Check names_of_iterations[k] to know which data has been inputed in the model
+facet_labels <- data.frame(
+	marker = c('COI', '12S'),
+	label  = c('A', 'B')) %>% 
+	mutate(marker=factor(marker,levels=c('COI','12S')))
 
 fig_1_a <-
-		s[[1]] %>%
+	s[[1]] %>%
 	mutate(marker='COI') %>% 
-	bind_rows(	s[[4]] %>% mutate(marker='MV1')) %>% 
+	bind_rows(s[[4]] %>% mutate(marker='12S')) %>% 
 	mutate(param=if_else(param=='Time','Time (days)',param)) %>% 
 	mutate(param=if_else(param=='Samp_period','Sampling period',param)) %>% 
 	mutate(param=if_else(param=='Light_day','Light effect during day',param)) %>% 
@@ -222,19 +233,30 @@ fig_1_a <-
 																		 'Light effect during day',
 																		 'Light effect during night',
 																		 'Biological replicates'
-																		 ))) %>% 
-		mutate(lo=Estimate-`Std. Error`) %>% 
-		mutate(up=Estimate+`Std. Error`) %>% 
-		ggplot()+
-		geom_point(aes(x=param,y=Estimate))+
-		geom_errorbar(aes(x=param,ymin=lo,ymax=up),width=0.2) +
-		theme_bw()+
-	facet_grid(~marker)+
-		labs(y='Dissimilarity effect (logit-scale)',
-				 x= 'Parameters')+
+	))) %>% 
+	mutate(lo=Estimate-`Std. Error`) %>% 
+	mutate(up=Estimate+`Std. Error`) %>% 
+	mutate(sig=`Pr(>|z|)` < 0.05) %>% 
+	mutate(marker=factor(marker,levels=c('COI','12S'))) %>% 
+	ggplot()+
+	geom_point(aes(x=param, y=Estimate, colour=sig), size=3)+
+		facet_wrap(~marker,nrow = 1)+
+	geom_errorbar(aes(x=param, ymin=lo, ymax=up, colour=sig), width=0.2) +
+	scale_colour_manual(values=c('FALSE'='red', 'TRUE'='black'),
+											labels=c('FALSE'='p ≥ 0.05', 'TRUE'='p < 0.05'),
+											name=NULL) +
+	theme_bw()+
+	geom_text(data=facet_labels,
+						aes(label=label),
+						x=-Inf, y=Inf,
+						hjust=-0.5, vjust=1.5,
+						size=6, fontface='bold') +
+	labs(y='Dissimilarity effect (logit-scale)',
+			 x='Parameters')+
 		theme(axis.text = element_text(size=15),
 					axis.title = element_text(size=19),
 					strip.text = element_text(size=16),
+					legend.position = 'none',
 					axis.text.x = element_text(angle = 45, 
 																		 vjust = 1.0, hjust = 1))
 
@@ -297,13 +319,24 @@ plot_dat2 <- design_mat_list[[4]] %>%
 	ungroup() %>% 
 	select(delta_date,D_est,D_mean,group)
 
+facet_labels2 <- data.frame(
+	marker = c('COI', '12S'),
+	label  = c('C', 'D')) %>% 
+	mutate(marker=factor(marker,levels=c('COI','12S')))
+
 # Then joiing the two data together to be able to plot them together
-fig_1_b <- 
-	plot_dat1 %>% mutate(marker='COI') %>% rbind(.,plot_dat2 %>% mutate(marker='MV1')) %>% 
+fig_1_b <-
+	plot_dat1 %>% mutate(marker='COI') %>% rbind(.,plot_dat2 %>% mutate(marker='12S')) %>% 
+		mutate(marker=factor(marker,levels=c('COI','12S'))) %>% 
 		ggplot()+
 		geom_line(aes(x=delta_date,y=D_est,colour = factor(group)),size=1,lty=2)+
 		geom_point(aes(x=delta_date,y=D_mean,colour = factor(group)),size=3)+
 		# ggtitle(names_of_iterations[[k]])+
+	  geom_text(data=facet_labels2,
+            aes(label=label),
+            x=-Inf, y=Inf,
+            hjust=-0.5, vjust=1.5,
+            size=6, fontface='bold') +
 		scale_color_manual(
 			values = c("Same_time_of_day" = "#1f78b4",
 								 "Diff_time_of_day" = "#e31a1c",
@@ -323,6 +356,6 @@ fig_1_b <-
 				legend.position = 'bottom')
 
 fig_1 <- cowplot::plot_grid(fig_1_a,fig_1_b,nrow = 2,align = 'v')
-ggsave(here('plots',paste0('Fig_2','.jpg')),fig_1,width = 10,height = 12)
+ggsave(here('plots',paste0('Fig_2xx','.jpg')),fig_1,width = 10,height = 12)
 
 # c("#1f78b4", "#e31a1c", "#33a02c", "#6a3d9a")

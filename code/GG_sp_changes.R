@@ -533,9 +533,9 @@ names(trophic_color_comb) <- c('Benthic invertebrates (COI)',
 															'Forage species (COI)',
 															'Filter feeders (COI)',
 															'Primary producers (COI)',
-															'Forage species (MV1)',
-															'Apex predators (MV1)',
-															'Mesopredators (MV1)')
+															'Forage species (12S)',
+															'Apex predators (12S)',
+															'Mesopredators (12S)')
 
 plot_data_3 <- ch_data_coi %>% 
 	filter(!is.na(TrophicLevel)) %>% 
@@ -559,12 +559,13 @@ plot_data_3 <- ch_data_coi %>%
 					mutate(Treatment=factor(Treatment,levels = c('Light - NoLight (night)','Day - Night','Light - NoLight (day)'))) %>% 
 					# mutate(Treatment=factor(Treatment,levels = c('Light-No_Light(night)','Day-Night','Light-No_Light(day)'))) %>% 
 					ungroup() %>% 
-					filter(TrophicLevel%in%names(trophic_color_mv1)) %>% mutate(Marker='MV1')
+					filter(TrophicLevel%in%names(trophic_color_mv1)) %>% mutate(Marker='12S')
 	) %>% 
 	mutate(TrophicLevel=paste0(TrophicLevel,' (',Marker,')')) %>% 
 	mutate(TrophicLevel=factor(TrophicLevel,levels = names(trophic_color_comb)))
 
-p3 <- ggplot()+
+p3 <-
+ggplot()+
 	geom_boxplot(data=plot_data_3,
 							 aes(x=Treatment,y=mean_eDNA_ch,colour = TrophicLevel),outlier.shape = NA,size=0.8,coef = 0)+
 	geom_point(data=plot_data_3 %>% filter(!(Species%in%c(sp_sig_mv1,sp_sig_coi))),aes(x=Treatment,y=mean_eDNA_ch),color='grey',alpha=0.5)+
@@ -584,8 +585,39 @@ p3 <- ggplot()+
 				axis.text = element_text(size = 15),
 				strip.text = element_text(size=16))
 
+p3_l <-
+	data.frame(Treatment = NA, mean_eDNA_ch = NA, 
+						 label = c("+ Day / − Night", "+ Light / − No Light")) %>% 
+	ggplot()+
+	geom_hline(aes(yintercept=0.1, linetype='within ± 0.1 eDNA\nindex change\n(insignificant change)'), colour='grey50') +
+	geom_hline(aes(yintercept=-0.1, linetype='within ± 0.1 eDNA\nindex change\n(insignificant change)'), colour='grey50') +
+	geom_point(aes(x=Treatment, y=mean_eDNA_ch, shape=label), alpha=0)+
+	scale_shape_manual(
+		name="eDNA index change",
+		values=c(NA, NA),
+		labels=c("+ Day  − Night", "+ Light  − No Light")) +
+	scale_linetype_manual(
+		name=NULL,
+		values=c('within ± 0.1 eDNA\nindex change\n(insignificant change)'='solid')) +
+	guides(
+		shape    = guide_legend(order=1, override.aes=list(alpha=0.7)),
+		linetype = guide_legend(order=2)) +
+	theme(legend.position="right",
+				legend.key=element_blank(),
+				legend.text  = element_text(size=14),
+				legend.title = element_text(size=15))
 
-ggsave(here('plots','Figure 2_cmb.jpg'),p3,width=11,heigh=12)
+p3_legend <- cowplot::get_legend(p3_l)
+
+p3_f <- cowplot::plot_grid(p3,p3_legend,rel_widths = c(8,2))
+ggsave(here('plots','Figure 2_cmbxxxx.jpg'),p3_f,width=12,heigh=12)
+
+
+
+eDNA_idx_change< -0.1|eDNA_idx_change> 0.1
+
+
+# ggsave(here('plots','Figure 2_cmb.jpg'),p3,width=11,heigh=12)
 
 
 
